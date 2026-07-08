@@ -247,7 +247,7 @@
     .modal {
       background: var(--ofw-off-white);
       border-radius: 20px;
-      max-width: 460px;
+      max-width: 520px;
       width: 100%;
       box-shadow: 0 24px 64px rgba(18, 40, 69, 0.3);
       overflow: hidden;
@@ -355,6 +355,36 @@
       margin: 0 auto 22px;
     }
 
+
+    .benefits {
+      list-style: none;
+      padding: 0;
+      margin: 4px auto 22px;
+      display: grid;
+      gap: 10px;
+      text-align: left;
+      max-width: 380px;
+    }
+    .benefit {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--ofw-ink);
+      line-height: 1.4;
+    }
+    .benefit-check {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--ofw-frost);
+      color: var(--ofw-cerulean);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .benefit-check svg { width: 12px; height: 12px; }
 
     .modal-actions {
       padding: 12px 36px 24px;
@@ -559,6 +589,27 @@
         <p class="subhead">
           OurFamilyWizard, our sister company, brings your schedule, messages, and expenses into one shared place.
         </p>
+
+        <ul class="benefits">
+          <li class="benefit">
+            <span class="benefit-check" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+            <span>Shared calendar with holidays, synced with your co-parent</span>
+          </li>
+          <li class="benefit">
+            <span class="benefit-check" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+            <span>Court-admissible messages, expense log, and journal</span>
+          </li>
+          <li class="benefit">
+            <span class="benefit-check" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+            <span>One place for medical, school, and emergency info</span>
+          </li>
+        </ul>
       </div>
 
       <div class="modal-actions">
