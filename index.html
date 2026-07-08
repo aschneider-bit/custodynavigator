@@ -245,11 +245,14 @@
     }
 
     .modal {
-      background: var(--ofw-off-white);
-      border-radius: 20px;
+      /* Custody Navigator: cream card, forest ink, softer edges */
+      background: #FAF6E8;
+      border-radius: 28px;
       max-width: 520px;
       width: 100%;
-      box-shadow: 0 24px 64px rgba(18, 40, 69, 0.3);
+      box-shadow:
+        0 30px 60px rgba(15, 58, 50, 0.20),
+        0 8px 20px rgba(15, 58, 50, 0.10);
       overflow: hidden;
       position: relative;
       animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -289,13 +292,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--ofw-anchor);
+      color: #5A6B60;
       transition: background 0.15s;
       z-index: 2;
     }
     .modal-close:hover {
-      background: var(--ofw-manilla);
-      color: var(--ofw-ink);
+      background: #E9DFC7;
+      color: #0F3A32;
     }
     .modal-close svg { width: 18px; height: 18px; }
 
@@ -323,7 +326,7 @@
       font-family: "Open Sans", sans-serif;
       font-size: 16px;
       font-weight: 400;
-      color: var(--ofw-ink);
+      color: #0F3A32;
       letter-spacing: -0.3px;
       line-height: 1;
       white-space: nowrap;
@@ -337,8 +340,8 @@
       font-weight: 700;
       letter-spacing: 1.2px;
       text-transform: uppercase;
-      color: var(--ofw-cerulean);
-      background: var(--ofw-frost);
+      color: #94411D; /* deep terracotta — AA on peach chip */
+      background: #FBC5A1; /* CN Grag orange */
       padding: 6px 12px;
       border-radius: 999px;
       white-space: nowrap;
@@ -347,32 +350,33 @@
       display: inline-block;
       width: 3px;
       height: 3px;
-      background: var(--ofw-cerulean);
+      background: #94411D;
       border-radius: 50%;
       margin: 0 8px;
-      opacity: 0.6;
+      opacity: 0.65;
     }
 
     .headline {
       font-family: "DM Serif Display", "freight-text-pro", Georgia, serif;
-      font-size: 32px;
+      font-size: 34px;
       line-height: 1.15;
-      color: var(--ofw-ink);
+      color: #0F3A32; /* CN forest green */
       font-weight: 400;
-      margin: 0 auto 12px;
+      margin: 0 auto 14px;
       letter-spacing: -0.5px;
-      max-width: 420px;
+      max-width: 440px;
     }
+    /* CN uses solid coral as emphasis inside headlines, not italic */
     .headline .free {
-      color: var(--ofw-cerulean);
-      font-style: italic;
+      color: #94411D; /* deep terracotta — AA on cream */
+      font-style: normal;
     }
 
     .subhead {
       font-size: 15px;
       line-height: 1.5;
-      color: var(--ofw-anchor);
-      max-width: 420px;
+      color: #4A5D53; /* softer green-grey */
+      max-width: 440px;
       margin: 0 auto 22px;
     }
 
@@ -394,16 +398,16 @@
       align-items: center;
       gap: 12px;
       font-size: 14px;
-      color: var(--ofw-ink);
+      color: #0F3A32;
       line-height: 1.4;
     }
     .benefit-check {
       flex-shrink: 0;
-      width: 20px;
-      height: 20px;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
-      background: var(--ofw-frost);
-      color: var(--ofw-cerulean);
+      background: #0F3A32; /* CN forest green */
+      color: #FAF6E8;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -421,8 +425,8 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 14px 24px;
-      border-radius: 10px;
+      padding: 15px 28px;
+      border-radius: 999px; /* CN pill buttons */
       font-family: "Open Sans", sans-serif;
       font-size: 16px;
       font-weight: 600;
@@ -430,41 +434,42 @@
       border: none;
       transition: background 0.15s, transform 0.05s;
       text-decoration: none;
+      letter-spacing: 0.2px;
     }
     .btn:active { transform: translateY(1px); }
     .btn-primary {
-      background: var(--ofw-cerulean);
-      color: white;
+      background: #0F3A32; /* CN forest green */
+      color: #FAF6E8;
     }
-    .btn-primary:hover { background: var(--ofw-deep-blue); }
+    .btn-primary:hover { background: #0A2A24; }
     .btn-primary svg { width: 18px; height: 18px; }
 
     .btn-secondary {
       background: transparent;
-      color: var(--ofw-anchor);
+      color: #4A5D53;
       font-size: 14px;
       font-weight: 600;
-      padding: 8px;
+      padding: 10px;
     }
-    .btn-secondary:hover { color: var(--ofw-ink); text-decoration: underline; }
+    .btn-secondary:hover { color: #0F3A32; text-decoration: underline; }
 
     .modal-footer {
-      background: var(--ofw-paper);
+      background: #F1EAD3; /* soft warm cream, one shade darker than modal */
       padding: 14px 40px;
-      border-top: 1px solid var(--ofw-manilla);
+      border-top: 1px dashed rgba(15, 58, 50, 0.18); /* CN's signature dashed divider */
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 20px;
       font-size: 12px;
-      color: var(--ofw-anchor);
+      color: #4A5D53;
     }
     .modal-footer-item {
       display: flex;
       align-items: center;
       gap: 6px;
     }
-    .modal-footer-item svg { width: 14px; height: 14px; color: var(--ofw-slate); }
+    .modal-footer-item svg { width: 14px; height: 14px; color: #7A8A80; }
 
     /* Fine print */
     .fine-print {
