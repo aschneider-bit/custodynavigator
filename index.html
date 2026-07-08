@@ -1,1 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Custody Navigator — Your Schedule</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=DM+Serif+Display&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      /* Custody Navigator palette (matches screenshot) */
+      --cn-bg: #F4EFE1;
+      --cn-ink: #0F3A32;
+      --cn-orange: #FBC5A1;
+      --cn-purple: #C7CBE6;
+      --cn-menu-bg: #E9DFC7;
+      --cn-muted: #8B7C5F;
 
+      /* OFW tokens */
+      --ofw-off-white: #FCFCF9;
+      --ofw-paper: #FAF9F3;
+      --ofw-parchment: #F6F4E8;
+      --ofw-manilla: #EDE9D1;
+      --ofw-frost: #EEF5F8;
+      --ofw-mist: #DDECF2;
+      --ofw-cerulean: #006BA1;
+      --ofw-deep-blue: #014C72;
+      --ofw-ink: #122845;
+      --ofw-anchor: #3A5368;
+      --ofw-slate: #688792;
+      --ofw-sky: #7FC8E5;
+      --ofw-nori: #03563A;
+      --ofw-moss: #60C47C;
+      --ofw-gilt: #D6A92D;
+      --ofw-canary: #FFED80;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: var(--cn-bg);
+      color: var(--cn-ink);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ================================================
+       CUSTODY NAVIGATOR PAGE (background context)
+       ================================================ */
+
+    .page {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px 40px 120px;
+    }
+
+    .header {
+      display: grid;
+      grid-template-columns: 60px 1fr 60px;
+      align-items: center;
+      padding: 16px 0 24px;
+      border-bottom: 1px dashed rgba(15, 58, 50, 0.25);
+    }
+
+    .cn-mark {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cn-mark svg { width: 100%; height: 100%; }
+
+    .cn-title {
+      text-align: center;
+      font-family: "Open Sans", sans-serif;
+      font-weight: 700;
+      font-size: 32px;
+      letter-spacing: 6px;
+      color: var(--cn-ink);
+    }
+
+    .cn-menu {
+      justify-self: end;
+      width: 42px; height: 42px;
+      background: var(--cn-menu-bg);
+      border-radius: 8px;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .cn-menu svg { width: 20px; height: 20px; color: var(--cn-ink); }
+
+    .legend {
+      display: flex;
+      justify-content: center;
+      gap: 80px;
+      padding: 32px 0 20px;
+    }
+    .legend-item {
+      display: flex; align-items: center; gap: 12px;
+      font-size: 20px;
+      color: var(--cn-ink);
+    }
+    .legend-dot { width: 14px; height: 14px; border-radius: 50%; }
+    .legend-dot.orange { background: var(--cn-orange); }
+    .legend-dot.purple { background: var(--cn-purple); }
+
+    .months {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px 60px;
+      padding-top: 16px;
+    }
+
+    .month {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .month-title {
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--cn-ink);
+      padding: 12px 0 16px;
+      width: 100%;
+      text-align: center;
+      border-top: 1px dashed rgba(15, 58, 50, 0.25);
+      border-bottom: 1px dashed rgba(15, 58, 50, 0.25);
+      margin-bottom: 8px;
+    }
+
+    .month-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px 4px;
+      width: 100%;
+    }
+
+    .dow {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--cn-muted);
+      text-align: center;
+      letter-spacing: 1px;
+      padding: 4px 0 8px;
+    }
+
+    .day {
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: var(--cn-ink);
+      border-radius: 50%;
+    }
+
+    .day.orange { background: var(--cn-orange); }
+    .day.purple { background: var(--cn-purple); }
+    .day.empty { visibility: hidden; }
+
+    /* Holiday marker — ring around the day + tiny flag above */
+    .day.holiday {
+      position: relative;
+      box-shadow: 0 0 0 2.5px var(--cn-ink);
+      font-weight: 700;
+      /* pulse gently so the eye picks it up as the thing that just happened */
+      animation: holidayPop 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+    }
+    .day.holiday::before {
+      content: "";
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 10px;
+      height: 10px;
+      background: var(--cn-ink);
+      clip-path: polygon(0 0, 100% 30%, 0 60%);
+    }
+    @keyframes holidayPop {
+      0% { transform: scale(0.7); box-shadow: 0 0 0 0 rgba(15, 58, 50, 0.6); }
+      60% { transform: scale(1.15); box-shadow: 0 0 0 6px rgba(15, 58, 50, 0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 2.5px var(--cn-ink); }
+    }
+
+    /* ================================================
+       BOTTOM ACTION BAR
+       ================================================ */
+
+    .action-bar {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      display: flex;
+      padding: 14px 28px;
+      gap: 44px;
+      z-index: 5;
+    }
+    .action {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: var(--cn-ink);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .action svg { width: 22px; height: 22px; }
+    .action.share { color: #1B6B57; }
+    .action.holidays { color: #8B93C3; }
+    .action.summary { color: #1B6B57; }
+
+    /* ================================================
+       OFW POST-EXPORT MODAL
+       ================================================ */
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 58, 50, 0.55);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 20px;
+    }
+
+    .modal {
+      background: var(--ofw-off-white);
+      border-radius: 20px;
+      max-width: 620px;
+      width: 100%;
+      max-height: calc(100vh - 48px);
+      overflow-y: auto;
+      box-shadow: 0 24px 64px rgba(18, 40, 69, 0.3);
+      position: relative;
+      animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Success chip at top */
+    .modal-success {
+      background: var(--ofw-parchment);
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ofw-nori);
+      border-bottom: 1px solid var(--ofw-manilla);
+    }
+    .modal-success svg {
+      width: 18px; height: 18px;
+      flex-shrink: 0;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 34px; height: 34px;
+      border: none;
+      background: transparent;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ofw-anchor);
+      transition: background 0.15s;
+      z-index: 2;
+    }
+    .modal-close:hover {
+      background: var(--ofw-manilla);
+      color: var(--ofw-ink);
+    }
+    .modal-close svg { width: 18px; height: 18px; }
+
+    .modal-body {
+      padding: 28px 36px 4px;
+      text-align: center;
+    }
+
+    .ofw-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .ofw-logo svg { width: 36px; height: 28px; }
+    .ofw-logo-text {
+      font-family: "Open Sans", sans-serif;
+      font-size: 17px;
+      font-weight: 400;
+      color: var(--ofw-ink);
+      letter-spacing: -0.3px;
+    }
+    .ofw-logo-text sup { font-size: 8px; }
+
+    .eyebrow {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      color: var(--ofw-cerulean);
+      background: var(--ofw-frost);
+      padding: 6px 14px;
+      border-radius: 999px;
+      margin-bottom: 20px;
+    }
+
+    .headline {
+      font-family: "DM Serif Display", "freight-text-pro", Georgia, serif;
+      font-size: 34px;
+      line-height: 1.1;
+      color: var(--ofw-ink);
+      font-weight: 400;
+      margin-bottom: 10px;
+      letter-spacing: -0.5px;
+    }
+    .headline .free {
+      color: var(--ofw-cerulean);
+      font-style: italic;
+    }
+
+    .subhead {
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--ofw-anchor);
+      max-width: 480px;
+      margin: 0 auto 22px;
+    }
+
+    /* Feature grid — the suite */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 24px;
+      text-align: left;
+    }
+    .feature {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 12px;
+      background: var(--ofw-paper);
+      border: 1px solid var(--ofw-manilla);
+      border-radius: 10px;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .feature:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(18, 40, 69, 0.06);
+    }
+    .feature-icon {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      background: var(--ofw-frost);
+      border: 1px solid var(--ofw-mist);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ofw-cerulean);
+    }
+    .feature-icon svg { width: 16px; height: 16px; }
+    .feature-body { min-width: 0; }
+    .feature-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ofw-ink);
+      line-height: 1.2;
+      margin-bottom: 2px;
+    }
+    .feature-desc {
+      font-size: 11.5px;
+      color: var(--ofw-anchor);
+      line-height: 1.3;
+    }
+    /* highlight the calendar tile since that's the user's current context */
+    .feature.feature--highlight {
+      background: var(--ofw-frost);
+      border-color: var(--ofw-cerulean);
+      position: relative;
+    }
+    .feature.feature--highlight .feature-icon {
+      background: var(--ofw-cerulean);
+      color: white;
+      border-color: var(--ofw-cerulean);
+    }
+    .feature-badge {
+      position: absolute;
+      top: -7px;
+      right: 8px;
+      background: var(--ofw-cerulean);
+      color: white;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      padding: 3px 7px;
+      border-radius: 999px;
+    }
+
+    .modal-actions {
+      padding: 8px 40px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 24px;
+      border-radius: 10px;
+      font-family: "Open Sans", sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: background 0.15s, transform 0.05s;
+      text-decoration: none;
+    }
+    .btn:active { transform: translateY(1px); }
+    .btn-primary {
+      background: var(--ofw-cerulean);
+      color: white;
+    }
+    .btn-primary:hover { background: var(--ofw-deep-blue); }
+    .btn-primary svg { width: 18px; height: 18px; }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--ofw-anchor);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 8px;
+    }
+    .btn-secondary:hover { color: var(--ofw-ink); text-decoration: underline; }
+
+    .modal-footer {
+      background: var(--ofw-paper);
+      padding: 14px 40px;
+      border-top: 1px solid var(--ofw-manilla);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      font-size: 12px;
+      color: var(--ofw-anchor);
+    }
+    .modal-footer-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .modal-footer-item svg { width: 14px; height: 14px; color: var(--ofw-slate); }
+
+    /* Fine print */
+    .fine-print {
+      font-size: 11px;
+      color: var(--ofw-slate);
+      text-align: center;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ BACKGROUND: CUSTODY NAVIGATOR PAGE ============ -->
+  <div class="page" aria-hidden="true">
+    <div class="header">
+      <div class="cn-mark">
+        <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="14" cy="14" r="10" fill="#F5A96A" />
+          <path d="M14 20 Q22 20 26 14 L26 30 Q26 34 22 34 L14 34 Z" fill="#0F3A32" />
+        </svg>
+      </div>
+      <h1 class="cn-title">CUSTODY NAVIGATOR</h1>
+      <button class="cn-menu" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="4" y1="7" x2="20" y2="7" />
+          <line x1="4" y1="12" x2="20" y2="12" />
+          <line x1="4" y1="17" x2="20" y2="17" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><span class="legend-dot orange"></span>Grag</div>
+      <div class="legend-item"><span class="legend-dot purple"></span>Grog</div>
+    </div>
+
+    <div class="months">
+      <!-- JULY 2026 (starts Wed the 1st) -->
+      <div class="month">
+        <div class="month-title">July 2026</div>
+        <div class="month-grid">
+          <div class="dow">S</div><div class="dow">M</div><div class="dow">T</div><div class="dow">W</div><div class="dow">T</div><div class="dow">F</div><div class="dow">S</div>
+          <div class="day empty"></div><div class="day empty"></div><div class="day empty"></div>
+          <div class="day">1</div><div class="day">2</div><div class="day">3</div><div class="day holiday" title="Independence Day">4</div>
+          <div class="day">5</div><div class="day">6</div><div class="day">7</div><div class="day orange">8</div><div class="day orange">9</div><div class="day purple">10</div><div class="day purple">11</div>
+          <div class="day orange">12</div><div class="day orange">13</div><div class="day orange">14</div><div class="day orange">15</div><div class="day purple">16</div><div class="day orange">17</div><div class="day orange">18</div>
+          <div class="day purple">19</div><div class="day purple">20</div><div class="day purple">21</div><div class="day orange">22</div><div class="day orange">23</div><div class="day orange">24</div><div class="day orange">25</div>
+          <div class="day orange">26</div><div class="day orange">27</div><div class="day orange">28</div><div class="day purple">29</div><div class="day orange">30</div><div class="day orange">31</div>
+        </div>
+      </div>
+
+      <!-- AUGUST 2026 (starts Sat the 1st) -->
+      <div class="month">
+        <div class="month-title">August 2026</div>
+        <div class="month-grid">
+          <div class="dow">S</div><div class="dow">M</div><div class="dow">T</div><div class="dow">W</div><div class="dow">T</div><div class="dow">F</div><div class="dow">S</div>
+          <div class="day empty"></div><div class="day empty"></div><div class="day empty"></div><div class="day empty"></div><div class="day empty"></div><div class="day empty"></div>
+          <div class="day orange">1</div>
+          <div class="day purple">2</div><div class="day purple">3</div><div class="day purple">4</div><div class="day orange">5</div><div class="day orange">6</div><div class="day purple">7</div><div class="day purple">8</div>
+          <div class="day orange">9</div><div class="day orange">10</div><div class="day orange">11</div><div class="day orange">12</div><div class="day orange">13</div><div class="day orange">14</div><div class="day orange">15</div>
+          <div class="day purple">16</div><div class="day orange">17</div><div class="day purple">18</div><div class="day orange">19</div><div class="day purple">20</div><div class="day orange">21</div><div class="day orange">22</div>
+          <div class="day purple">23</div><div class="day orange">24</div><div class="day orange">25</div><div class="day orange">26</div><div class="day orange">27</div><div class="day orange">28</div><div class="day orange">29</div>
+          <div class="day purple">30</div><div class="day">31</div>
+        </div>
+      </div>
+
+      <!-- SEPTEMBER 2026 (starts Tue the 1st) -->
+      <div class="month">
+        <div class="month-title">September 2026</div>
+        <div class="month-grid">
+          <div class="dow">S</div><div class="dow">M</div><div class="dow">T</div><div class="dow">W</div><div class="dow">T</div><div class="dow">F</div><div class="dow">S</div>
+          <div class="day empty"></div><div class="day empty"></div>
+          <div class="day purple">1</div><div class="day orange">2</div><div class="day orange">3</div><div class="day orange">4</div><div class="day orange">5</div>
+          <div class="day orange">6</div><div class="day orange">7</div><div class="day orange">8</div><div class="day purple">9</div><div class="day orange">10</div><div class="day orange">11</div><div class="day orange">12</div>
+          <div class="day purple">13</div><div class="day orange">14</div><div class="day orange">15</div><div class="day purple">16</div><div class="day orange">17</div><div class="day purple">18</div><div class="day orange">19</div>
+          <div class="day orange">20</div><div class="day orange">21</div><div class="day orange">22</div><div class="day purple">23</div><div class="day purple">24</div><div class="day orange">25</div><div class="day orange">26</div>
+          <div class="day purple">27</div><div class="day orange">28</div><div class="day orange">29</div><div class="day orange">30</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom action bar -->
+  <div class="action-bar">
+    <div class="action share">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+      </svg>
+      <span>Share</span>
+    </div>
+    <div class="action holidays">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2v2M4 12H2M22 12h-2M17 17l1 1M6 6l1 1M6 18l1-1M17 7l1-1"/>
+        <circle cx="12" cy="12" r="5"/>
+      </svg>
+      <span>Holidays</span>
+    </div>
+    <div class="action summary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+        <line x1="3" y1="10" x2="21" y2="10"/>
+        <polygon points="12 13 13.09 15.26 15.5 15.5 13.75 17.14 14.18 19.5 12 18.5 9.82 19.5 10.25 17.14 8.5 15.5 10.91 15.26"/>
+      </svg>
+      <span>Summary</span>
+    </div>
+  </div>
+
+  <!-- ============ OFW POST-EXPORT MODAL ============ -->
+  <div class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
+
+    <div class="modal">
+
+      <button class="modal-close" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+
+      <div class="modal-body">
+        <!-- OFW logo -->
+        <div class="ofw-logo" aria-label="OurFamilyWizard">
+          <svg viewBox="0 0 68.5 53.77" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g transform="translate(20.69, 0)">
+              <path d="M25.9957 24.2972L46.0755 12.7415L45.4357 11.638C45.023 10.9252 44.1081 10.6784 43.3927 11.0965L26.6836 20.7057V1.4873C26.6836 0.66483 26.0164 0 25.1909 0H23.9114V23.1046C23.9114 24.167 25.0671 24.8318 25.9888 24.2972" fill="#7FC8E5"/>
+              <path d="M26.8762 28.2038L46.956 39.7595L47.5957 38.6561C48.0085 37.9432 47.7608 37.0317 47.0523 36.6204L30.3432 27.0112L47.0523 17.402C47.7677 16.9908 48.0085 16.0792 47.6026 15.3732L46.9629 14.2698L26.8831 25.8255C25.9613 26.3532 25.9613 27.6829 26.8831 28.2107" fill="#7FC8E5"/>
+              <path d="M19.3919 1.4873V20.7126L2.68284 11.1034C1.96743 10.6921 1.05253 10.9389 0.639786 11.6448L0 12.7483L20.0798 24.304C21.0016 24.8318 22.1572 24.1738 22.1572 23.1115V0H20.8777C20.0523 0 19.385 0.66483 19.385 1.4873" fill="#7FC8E5"/>
+              <path d="M24.0765 30.6653V53.7699H25.356C26.1814 53.7699 26.8487 53.1051 26.8487 52.2826V33.0642L43.5577 42.6734C44.2732 43.0847 45.1881 42.8379 45.6008 42.132L46.2406 41.0285L26.1539 29.4727C25.2321 28.945 24.0765 29.603 24.0765 30.6653" fill="#7FC8E5"/>
+            </g>
+            <g transform="translate(0, 14.25)">
+              <path d="M39.8795 11.5557L19.7998 0L19.16 1.10348C18.7473 1.81629 18.9949 2.72787 19.7034 3.13225L36.4125 12.7415L0.744978 33.2484C0.0295645 33.6597-0.211198 34.5712 0.201541 35.284L0.841284 36.3875L39.8864 13.934C40.8082 13.4063 40.8082 12.0766 39.8864 11.542" fill="#122845"/>
+              <path d="M40.76 15.2127L1.71492 37.6662L2.35466 38.7697C2.7674 39.4825 3.68231 39.7224 4.39772 39.318L40.0652 18.811V38.0294C40.0652 38.8519 40.7325 39.5167 41.558 39.5167H42.8375V16.4121C42.8375 15.3498 41.6818 14.6849 40.76 15.2196" fill="#122845"/>
+            </g>
+          </svg>
+          <span class="ofw-logo-text">OurFamilyWizard<sup>&reg;</sup></span>
+        </div>
+
+        <span class="eyebrow">Up to $300 value · Exclusive offer</span>
+
+        <h2 class="headline" id="modal-headline">
+          Get a full year of the complete co-parenting suite <span class="free">on us</span>
+        </h2>
+
+        <p class="subhead">
+          OurFamilyWizard, our sister company, brings your schedule, messages, expenses, and records into one place — trusted by 1M+ parents and 27,000+ family law professionals.
+        </p>
+
+        <!-- The suite: 7 features from ourfamilywizard.com/product-features -->
+        <div class="feature-grid">
+          <div class="feature feature--highlight">
+            <span class="feature-badge">Your schedule</span>
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+            </div>
+            <div class="feature-body">
+              <div class="feature-name">Calendar</div>
+              <div class="feature-desc">Parenting time, holidays, and change requests everyone can see.</div>
+            </div>
+          </div>
+
+          <div class="feature">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+            </div>
+            <div class="feature-body">
+              <div class="feature-name">Messages + ToneMeter</div>
+              <div class="feature-desc">Secure, court-admissible. Flags tone before you hit send.</div>
+            </div>
+          </div>
+
+          <div class="feature">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+            </div>
+            <div class="feature-body">
+              <div class="feature-name">Expenses</div>
+              <div class="feature-desc">Track shared costs, attach receipts, send OFWpay™ payments.</div>
+            </div>
+          </div>
+
+          <div class="feature">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+              </svg>
+            </div>
+            <div class="feature-body">
+              <div class="feature-name">Calls</div>
+              <div class="feature-desc">Documented video and audio calls for virtual visitation.</div>
+            </div>
+          </div>
+
+          <div class="feature">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"/><polygon points="18 2 22 6 12 16 8 16 8 12 18 2"/>
+              </svg>
+            </div>
+            <div class="feature-body">
+              <div class="feature-name">Journal</div>
+              <div class="feature-desc">Moments, check-ins, and last-minute changes — all timestamped.</div>
+            </div>
+          </div>
+
+          <div class="feature">
+            <div class="feature-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+              </svg>
+            </div>
+            <div class="feature-body">
+              <div class="feature-name">Info Bank</div>
+              <div class="feature-desc">Medical, insurance, emergency contacts, school info — one place.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-primary">
+          Get Started
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </button>
+        <button class="btn btn-secondary">Not now — keep building my schedule</button>
+      </div>
+
+      <div class="modal-footer">
+        <div class="modal-footer-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          <span>Trusted by 1M+ co-parents</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Dismiss modal on click of close or secondary button
+    const backdrop = document.querySelector('.modal-backdrop');
+    const closeBtn = document.querySelector('.modal-close');
+    const secondaryBtn = document.querySelector('.btn-secondary');
+    [closeBtn, secondaryBtn].forEach(el => el && el.addEventListener('click', () => {
+      backdrop.style.display = 'none';
+    }));
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) backdrop.style.display = 'none';
+    });
+  </script>
+</body>
+</html>
