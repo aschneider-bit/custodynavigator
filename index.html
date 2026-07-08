@@ -300,47 +300,67 @@
     .modal-close svg { width: 18px; height: 18px; }
 
     .modal-body {
-      padding: 36px 36px 8px;
+      padding: 28px 36px 8px;
       text-align: center;
     }
 
+    .modal-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 26px;
+    }
+
     .ofw-logo {
-      display: inline-flex;
+      display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 24px;
     }
-    .ofw-logo svg { width: 36px; height: 28px; }
+    .ofw-logo svg { width: 34px; height: 26px; display: block; }
     .ofw-logo-text {
       font-family: "Open Sans", sans-serif;
-      font-size: 17px;
+      font-size: 16px;
       font-weight: 400;
       color: var(--ofw-ink);
       letter-spacing: -0.3px;
+      line-height: 1;
+      white-space: nowrap;
     }
     .ofw-logo-text sup { font-size: 8px; }
 
     .eyebrow {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
       font-size: 11px;
       font-weight: 700;
-      letter-spacing: 1.4px;
+      letter-spacing: 1.2px;
       text-transform: uppercase;
       color: var(--ofw-cerulean);
       background: var(--ofw-frost);
-      padding: 6px 14px;
+      padding: 6px 12px;
       border-radius: 999px;
-      margin-bottom: 20px;
+      white-space: nowrap;
+    }
+    .eyebrow .divider {
+      display: inline-block;
+      width: 3px;
+      height: 3px;
+      background: var(--ofw-cerulean);
+      border-radius: 50%;
+      margin: 0 8px;
+      opacity: 0.6;
     }
 
     .headline {
       font-family: "DM Serif Display", "freight-text-pro", Georgia, serif;
-      font-size: 34px;
-      line-height: 1.1;
+      font-size: 32px;
+      line-height: 1.15;
       color: var(--ofw-ink);
       font-weight: 400;
-      margin-bottom: 10px;
+      margin: 0 auto 12px;
       letter-spacing: -0.5px;
+      max-width: 420px;
     }
     .headline .free {
       color: var(--ofw-cerulean);
@@ -351,7 +371,7 @@
       font-size: 15px;
       line-height: 1.5;
       color: var(--ofw-anchor);
-      max-width: 480px;
+      max-width: 420px;
       margin: 0 auto 22px;
     }
 
@@ -563,27 +583,31 @@
       </button>
 
       <div class="modal-body">
-        <!-- OFW logo -->
-        <div class="ofw-logo" aria-label="OurFamilyWizard">
-          <svg viewBox="0 0 68.5 53.77" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g transform="translate(20.69, 0)">
-              <path d="M25.9957 24.2972L46.0755 12.7415L45.4357 11.638C45.023 10.9252 44.1081 10.6784 43.3927 11.0965L26.6836 20.7057V1.4873C26.6836 0.66483 26.0164 0 25.1909 0H23.9114V23.1046C23.9114 24.167 25.0671 24.8318 25.9888 24.2972" fill="#7FC8E5"/>
-              <path d="M26.8762 28.2038L46.956 39.7595L47.5957 38.6561C48.0085 37.9432 47.7608 37.0317 47.0523 36.6204L30.3432 27.0112L47.0523 17.402C47.7677 16.9908 48.0085 16.0792 47.6026 15.3732L46.9629 14.2698L26.8831 25.8255C25.9613 26.3532 25.9613 27.6829 26.8831 28.2107" fill="#7FC8E5"/>
-              <path d="M19.3919 1.4873V20.7126L2.68284 11.1034C1.96743 10.6921 1.05253 10.9389 0.639786 11.6448L0 12.7483L20.0798 24.304C21.0016 24.8318 22.1572 24.1738 22.1572 23.1115V0H20.8777C20.0523 0 19.385 0.66483 19.385 1.4873" fill="#7FC8E5"/>
-              <path d="M24.0765 30.6653V53.7699H25.356C26.1814 53.7699 26.8487 53.1051 26.8487 52.2826V33.0642L43.5577 42.6734C44.2732 43.0847 45.1881 42.8379 45.6008 42.132L46.2406 41.0285L26.1539 29.4727C25.2321 28.945 24.0765 29.603 24.0765 30.6653" fill="#7FC8E5"/>
-            </g>
-            <g transform="translate(0, 14.25)">
-              <path d="M39.8795 11.5557L19.7998 0L19.16 1.10348C18.7473 1.81629 18.9949 2.72787 19.7034 3.13225L36.4125 12.7415L0.744978 33.2484C0.0295645 33.6597-0.211198 34.5712 0.201541 35.284L0.841284 36.3875L39.8864 13.934C40.8082 13.4063 40.8082 12.0766 39.8864 11.542" fill="#122845"/>
-              <path d="M40.76 15.2127L1.71492 37.6662L2.35466 38.7697C2.7674 39.4825 3.68231 39.7224 4.39772 39.318L40.0652 18.811V38.0294C40.0652 38.8519 40.7325 39.5167 41.558 39.5167H42.8375V16.4121C42.8375 15.3498 41.6818 14.6849 40.76 15.2196" fill="#122845"/>
-            </g>
-          </svg>
-          <span class="ofw-logo-text">OurFamilyWizard<sup>&reg;</sup></span>
+        <!-- Header row: logo left, exclusive-offer chip right -->
+        <div class="modal-header-row">
+          <div class="ofw-logo" aria-label="OurFamilyWizard">
+            <svg viewBox="0 0 68.5 53.77" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g transform="translate(20.69, 0)">
+                <path d="M25.9957 24.2972L46.0755 12.7415L45.4357 11.638C45.023 10.9252 44.1081 10.6784 43.3927 11.0965L26.6836 20.7057V1.4873C26.6836 0.66483 26.0164 0 25.1909 0H23.9114V23.1046C23.9114 24.167 25.0671 24.8318 25.9888 24.2972" fill="#7FC8E5"/>
+                <path d="M26.8762 28.2038L46.956 39.7595L47.5957 38.6561C48.0085 37.9432 47.7608 37.0317 47.0523 36.6204L30.3432 27.0112L47.0523 17.402C47.7677 16.9908 48.0085 16.0792 47.6026 15.3732L46.9629 14.2698L26.8831 25.8255C25.9613 26.3532 25.9613 27.6829 26.8831 28.2107" fill="#7FC8E5"/>
+                <path d="M19.3919 1.4873V20.7126L2.68284 11.1034C1.96743 10.6921 1.05253 10.9389 0.639786 11.6448L0 12.7483L20.0798 24.304C21.0016 24.8318 22.1572 24.1738 22.1572 23.1115V0H20.8777C20.0523 0 19.385 0.66483 19.385 1.4873" fill="#7FC8E5"/>
+                <path d="M24.0765 30.6653V53.7699H25.356C26.1814 53.7699 26.8487 53.1051 26.8487 52.2826V33.0642L43.5577 42.6734C44.2732 43.0847 45.1881 42.8379 45.6008 42.132L46.2406 41.0285L26.1539 29.4727C25.2321 28.945 24.0765 29.603 24.0765 30.6653" fill="#7FC8E5"/>
+              </g>
+              <g transform="translate(0, 14.25)">
+                <path d="M39.8795 11.5557L19.7998 0L19.16 1.10348C18.7473 1.81629 18.9949 2.72787 19.7034 3.13225L36.4125 12.7415L0.744978 33.2484C0.0295645 33.6597-0.211198 34.5712 0.201541 35.284L0.841284 36.3875L39.8864 13.934C40.8082 13.4063 40.8082 12.0766 39.8864 11.542" fill="#122845"/>
+                <path d="M40.76 15.2127L1.71492 37.6662L2.35466 38.7697C2.7674 39.4825 3.68231 39.7224 4.39772 39.318L40.0652 18.811V38.0294C40.0652 38.8519 40.7325 39.5167 41.558 39.5167H42.8375V16.4121C42.8375 15.3498 41.6818 14.6849 40.76 15.2196" fill="#122845"/>
+              </g>
+            </svg>
+            <span class="ofw-logo-text">OurFamilyWizard<sup>&reg;</sup></span>
+          </div>
+
+          <span class="eyebrow">
+            Exclusive offer<span class="divider" aria-hidden="true"></span>$300 value
+          </span>
         </div>
 
-        <span class="eyebrow">Up to $300 value</span>
-
         <h2 class="headline" id="modal-headline">
-          Get a full year of OFW <span class="free">on us</span>
+          Get a free year of the #1 co-parenting app <span class="free">on us</span>
         </h2>
 
         <p class="subhead">
