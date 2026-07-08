@@ -366,10 +366,17 @@
       letter-spacing: -0.5px;
       max-width: 440px;
     }
-    /* CN uses solid coral as emphasis inside headlines, not italic */
+    /* Highlight-marker treatment behind emphasized word (like CN's coral behind key phrases) */
     .headline .free {
-      color: #94411D; /* deep terracotta — AA on cream */
+      color: #0F3A32; /* keep forest green — highlight is the accent */
       font-style: normal;
+      background: #C7CBE6; /* CN Grog periwinkle */
+      padding: 2px 12px 4px;
+      border-radius: 8px;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+      display: inline-block;
+      line-height: 1;
     }
 
     .subhead {
@@ -438,10 +445,10 @@
     }
     .btn:active { transform: translateY(1px); }
     .btn-primary {
-      background: #0F3A32; /* CN forest green */
+      background: #5D67A6; /* deep periwinkle — matches "on us" highlight family */
       color: #FAF6E8;
     }
-    .btn-primary:hover { background: #0A2A24; }
+    .btn-primary:hover { background: #4E5798; }
     .btn-primary svg { width: 18px; height: 18px; }
 
     .btn-secondary {
