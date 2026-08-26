@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Divorce Navigator — Custody Navigator</title>
+<style>
+/* ── Reset & base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cn-forest:       #002B14;
+  --cn-green:        #065444;
+  --cn-green-mid:    #0A9373;
+  --cn-green-light:  #6DCAB7;
+  --cn-green-pale:   #DEF1E7;
+  --cn-bg:           #F9F4ED;
+  --cn-surface:      #FFFFFF;
+  --cn-surface-warm: #F8F2EB;
+  --cn-outline:      #B2A799;
+  --cn-outline-lt:   #EDDFCC;
+  --cn-text-primary: #002B14;
+  --cn-text-sec:     #3B342A;
+  --cn-text-muted:   #777066;
+  --cn-parent-a:     #FD8E3F;
+  --cn-parent-b:     #8EA5DB;
+  --ofw-blue:        #1B5CA8;
+  --ofw-blue-dark:   #134282;
+}
+
+html, body {
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  background: var(--cn-bg);
+  color: var(--cn-text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ══════════════════════════════════════
+   APP SHELL (background context)
+══════════════════════════════════════ */
+.app-shell {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  width: 224px;
+  flex-shrink: 0;
+  background: var(--cn-forest);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+.sidebar-logo {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.sidebar-logo img {
+  width: 140px;
+  display: block;
+}
+.sidebar-nav {
+  flex: 1;
+  padding: 12px 0;
+  overflow-y: auto;
+}
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 18px;
+  color: rgba(255,255,255,0.65);
+  font-size: 13.5px;
+  font-weight: 400;
+  cursor: pointer;
+  border-radius: 0;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+.sidebar-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.9); }
+.sidebar-item.active { background: rgba(255,255,255,0.1); color: #fff; font-weight: 600; }
+.sidebar-icon { width: 16px; height: 16px; opacity: 0.7; flex-shrink: 0; }
+.sidebar-item.active .sidebar-icon { opacity: 1; }
+.sidebar-footer {
+  padding: 16px 18px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  font-size: 11.5px;
+  color: rgba(255,255,255,0.35);
+}
+.sidebar-badge {
+  margin-left: auto;
+  background: var(--cn-green-mid);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── Main content area ── */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px 40px;
+  position: relative;
+}
+.page-header {
+  margin-bottom: 28px;
+}
+.page-header h1 {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--cn-forest);
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+.page-header p {
+  font-size: 14px;
+  color: var(--cn-text-muted);
+  line-height: 1.6;
+}
+
+/* Divorce navigator card (trigger surface) */
+.divorce-nav-card {
+  background: var(--cn-surface);
+  border: 1px solid var(--cn-outline-lt);
+  border-radius: 12px;
+  padding: 28px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.divorce-nav-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: var(--cn-green-pale);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.divorce-nav-text { flex: 1; }
+.divorce-nav-text h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--cn-forest);
+  margin-bottom: 5px;
+  letter-spacing: -0.01em;
+}
+.divorce-nav-text p {
+  font-size: 13.5px;
+  color: var(--cn-text-muted);
+  line-height: 1.55;
+}
+.btn-primary {
+  background: var(--cn-green);
+  color: #fff;
+  border: none;
+  border-radius: 9999px;
+  padding: 11px 22px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+  font-family: inherit;
+}
+.btn-primary:hover { background: var(--cn-forest); }
+.btn-secondary {
+  background: transparent;
+  color: var(--cn-green);
+  border: 1.5px solid var(--cn-green);
+  border-radius: 9999px;
+  padding: 10px 22px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+  font-family: inherit;
+}
+.btn-secondary:hover { background: var(--cn-green); color: #fff; }
+.btn-ghost {
+  background: transparent;
+  color: var(--cn-text-muted);
+  border: none;
+  padding: 10px 18px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 9999px;
+  transition: background 0.15s, color 0.15s;
+  font-family: inherit;
+}
+.btn-ghost:hover { background: var(--cn-outline-lt); color: var(--cn-text-sec); }
+
+/* Other page content (blurred out) */
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.content-card {
+  background: var(--cn-surface);
+  border: 1px solid var(--cn-outline-lt);
+  border-radius: 12px;
+  padding: 24px;
+}
+.content-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--cn-text-sec);
+  margin-bottom: 10px;
+}
+.placeholder-bar {
+  height: 10px;
+  background: var(--cn-outline-lt);
+  border-radius: 9999px;
+  margin-bottom: 8px;
+}
+.placeholder-bar.short { width: 60%; }
+.placeholder-bar.med { width: 80%; }
+
+
+/* ══════════════════════════════════════
+   MODAL OVERLAY
+══════════════════════════════════════ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,43,20,0.45);
+  backdrop-filter: blur(3px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+.modal-backdrop.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal {
+  background: var(--cn-bg);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 24px 64px rgba(0,43,20,0.22), 0 4px 16px rgba(0,43,20,0.1);
+  overflow: hidden;
+  transform: translateY(12px) scale(0.98);
+  transition: transform 0.25s ease;
+}
+.modal-backdrop.visible .modal {
+  transform: translateY(0) scale(1);
+}
+
+/* ── Step panels ── */
+.modal-step {
+  display: none;
+}
+.modal-step.active {
+  display: block;
+}
+
+/* ── Step 0 — hook screen ── */
+.step0-body {
+  padding: 40px 28px 32px;
+  text-align: center;
+}
+.step0-glyph {
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  background: var(--cn-green-pale);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 22px;
+}
+.step0-glyph svg { width: 32px; height: 32px; }
+.step0-title {
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--cn-forest);
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin-bottom: 12px;
+}
+.step0-sub {
+  font-size: 14.5px;
+  color: var(--cn-text-muted);
+  line-height: 1.65;
+  max-width: 340px;
+  margin: 0 auto;
+}
+.step0-footer {
+  padding: 4px 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.step0-footer .btn-primary {
+  padding: 15px;
+  font-size: 15.5px;
+  width: 100%;
+  text-align: center;
+}
+.step0-footer .btn-ghost {
+  text-align: center;
+  font-size: 13.5px;
+}
+.step0-pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 20px 0 0;
+}
+.step0-pill {
+  background: var(--cn-bg);
+  border: 1.5px solid var(--cn-outline-lt);
+  border-radius: 9999px;
+  padding: 6px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--cn-text-sec);
+}
+
+/* ── Step 1 header ── */
+.step1-hero {
+  padding: 36px 28px 4px;
+}
+.step1-progress {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 22px;
+}
+.progress-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cn-outline-lt);
+  transition: background 0.2s;
+}
+.progress-dot.done { background: var(--cn-green-mid); }
+.progress-dot.active { width: 18px; border-radius: 9999px; background: var(--cn-green); }
+.step1-hero-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--cn-forest);
+  letter-spacing: -0.025em;
+  line-height: 1.18;
+  margin-bottom: 8px;
+}
+.step1-hero-sub {
+  font-size: 14px;
+  color: var(--cn-text-muted);
+  line-height: 1.6;
+}
+
+/* ── Modal header bar (steps 2B) ── */
+.modal-header-bar {
+  padding: 24px 28px 20px;
+  border-bottom: 1px solid var(--cn-outline-lt);
+}
+.modal-progress {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.modal-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--cn-green-mid);
+  margin-bottom: 8px;
+}
+.modal-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--cn-forest);
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+.modal-subtitle {
+  font-size: 14px;
+  color: var(--cn-text-muted);
+  line-height: 1.6;
+}
+
+/* ── Step 1 question label ── */
+.step1-question-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--cn-text-muted);
+  margin-bottom: 12px;
+}
+
+/* ── Modal body ── */
+.modal-body {
+  padding: 24px 28px;
+}
+.modal-footer {
+  padding: 20px 28px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.modal-footer .btn-primary { text-align: center; width: 100%; padding: 14px; font-size: 15px; }
+.modal-footer .btn-secondary { text-align: center; width: 100%; padding: 13px; font-size: 14px; }
+.modal-footer .btn-ghost { text-align: center; width: 100%; font-size: 13.5px; padding: 10px; }
+
+/* ── Radio choices ── */
+.choice-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.choice-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1.5px solid var(--cn-outline-lt);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  background: var(--cn-bg);
+  position: relative;
+}
+.choice-item:hover { border-color: var(--cn-green-light); background: #fff; }
+.choice-item.selected { border-color: var(--cn-green); background: var(--cn-green-pale); }
+.choice-radio {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--cn-outline);
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s;
+}
+.choice-item.selected .choice-radio {
+  border-color: var(--cn-green);
+  background: var(--cn-green);
+}
+.choice-radio-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.choice-item.selected .choice-radio-dot { opacity: 1; }
+.choice-text { flex: 1; }
+.choice-label {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--cn-forest);
+  line-height: 1.35;
+  margin-bottom: 3px;
+}
+.choice-desc {
+  font-size: 12.5px;
+  color: var(--cn-text-muted);
+  line-height: 1.5;
+}
+
+/* ── Claude product pitch ── */
+.claude-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--cn-forest);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  margin-bottom: 16px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.claude-ai-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cn-green-light);
+}
+
+.feature-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 20px 0;
+}
+.feature-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.feature-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--cn-green-pale);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.feature-icon svg { width: 16px; height: 16px; }
+.feature-text { font-size: 13.5px; font-weight: 500; color: var(--cn-text-sec); line-height: 1.4; }
+
+/* Pricing callout */
+.pricing-callout {
+  background: var(--cn-bg);
+  border: 1.5px solid var(--cn-outline-lt);
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 20px 0 4px;
+}
+.pricing-amount {
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--cn-forest);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.pricing-period {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--cn-text-muted);
+  margin-top: 3px;
+}
+.pricing-trial {
+  background: var(--cn-green-pale);
+  color: var(--cn-green);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  white-space: nowrap;
+}
+.modal-fine-print {
+  font-size: 11.5px;
+  color: var(--cn-text-muted);
+  text-align: center;
+  line-height: 1.5;
+  margin-top: 4px;
+}
+
+/* ── OFW step (matches live CN modal) ── */
+.ofw-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 28px 0;
+}
+.ofw-logo-wrap img {
+  height: 22px;
+  display: block;
+}
+.ofw-exclusive-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #FDDEC7;
+  color: #8C4A1D;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  white-space: nowrap;
+}
+.ofw-content {
+  padding: 22px 28px 0;
+  text-align: center;
+}
+.ofw-headline {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--cn-forest);
+  letter-spacing: -0.025em;
+  line-height: 1.18;
+  margin-bottom: 10px;
+}
+.ofw-on-us-wrap {
+  margin-bottom: 16px;
+}
+.ofw-on-us {
+  display: inline-block;
+  background: #D6E4F7;
+  color: var(--cn-forest);
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  padding: 2px 12px 4px;
+  border-radius: 8px;
+}
+.ofw-desc {
+  font-size: 14px;
+  color: var(--cn-text-muted);
+  line-height: 1.65;
+  margin-bottom: 18px;
+  text-align: center;
+}
+.ofw-check-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.ofw-check-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13.5px;
+  color: var(--cn-text-sec);
+  font-weight: 500;
+}
+.ofw-check-circle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--cn-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.ofw-cta-area {
+  padding: 20px 28px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ofw-get-started-btn {
+  background: var(--cn-forest);
+  color: #fff;
+  border: none;
+  border-radius: 9999px;
+  padding: 15px 22px;
+  font-size: 15.5px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+  transition: background 0.15s;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.ofw-get-started-btn:hover { background: var(--cn-green); }
+.ofw-not-now-btn {
+  background: transparent;
+  border: none;
+  color: var(--cn-text-muted);
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  padding: 8px;
+  font-family: inherit;
+  transition: color 0.15s;
+}
+.ofw-not-now-btn:hover { color: var(--cn-text-sec); }
+.ofw-footer-trust {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 14px 28px 22px;
+  font-size: 12px;
+  color: var(--cn-text-muted);
+  font-weight: 500;
+  border-top: 1px solid var(--cn-outline-lt);
+  margin-top: 8px;
+}
+
+/* ── Divider ── */
+.modal-divider {
+  height: 1px;
+  background: var(--cn-outline-lt);
+  margin: 0 28px;
+}
+
+/* ── Dismiss button ── */
+.modal-dismiss {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(0,43,20,0.07);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  z-index: 10;
+  font-family: inherit;
+}
+.modal-dismiss:hover { background: rgba(0,43,20,0.13); }
+.modal-dismiss svg { width: 12px; height: 12px; }
+
+/* ── Trigger demo button ── */
+.demo-trigger {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--cn-forest);
+  color: #fff;
+  border: none;
+  border-radius: 9999px;
+  padding: 12px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0,43,20,0.3);
+  font-family: inherit;
+  z-index: 50;
+}
+.demo-trigger:hover { background: var(--cn-green); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     APP SHELL (background context)
+══════════════════════════════════════ -->
+<div class="app-shell">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <img src="https://cdn.prod.website-files.com/66f46f0c9326a49e78332d4a/6734bcbda8644ff14f667eb0_custody-navigator-logo.png" alt="Custody Navigator">
+    </div>
+    <nav class="sidebar-nav">
+      <a class="sidebar-item" href="#">
+        <svg class="sidebar-icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" fill="currentColor"/><rect x="9" y="1" width="6" height="6" rx="1.5" fill="currentColor"/><rect x="1" y="9" width="6" height="6" rx="1.5" fill="currentColor"/><rect x="9" y="9" width="6" height="6" rx="1.5" fill="currentColor"/></svg>
+        My calendar
+      </a>
+      <a class="sidebar-item" href="#">
+        <svg class="sidebar-icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="2" width="14" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M5 1v2M11 1v2M1 6h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Manage calendar
+      </a>
+      <a class="sidebar-item" href="#">
+        <svg class="sidebar-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1L10.2 5.5L15 6.2L11.5 9.6L12.4 14.4L8 12.1L3.6 14.4L4.5 9.6L1 6.2L5.8 5.5L8 1Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+        Schedule summary
+      </a>
+      <a class="sidebar-item" href="#">
+        <svg class="sidebar-icon" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h8M2 12h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Schedule templates
+      </a>
+      <a class="sidebar-item active" href="#">
+        <svg class="sidebar-icon" viewBox="0 0 16 16" fill="none"><path d="M8 1C4.13 1 1 4.13 1 8s3.13 7 7 7 7-3.13 7-7-3.13-7-7-7Z" stroke="currentColor" stroke-width="1.5"/><path d="M8 5v3.5l2.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Divorce Navigator
+        <span class="sidebar-badge">New</span>
+      </a>
+      <a class="sidebar-item" href="#">
+        <svg class="sidebar-icon" viewBox="0 0 16 16" fill="none"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM2 14c0-3.31 2.69-6 6-6s6 2.69 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Profile
+      </a>
+    </nav>
+    <div class="sidebar-footer">Made with OurFamilyWizard</div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="main-content">
+    <div class="page-header">
+      <h1>Divorce Navigator</h1>
+      <p>Tools and guidance to help you navigate the legal side of your divorce — at your own pace.</p>
+    </div>
+
+    <!-- Divorce navigator entry card -->
+    <div class="divorce-nav-card">
+      <div class="divorce-nav-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Z" stroke="#065444" stroke-width="1.8"/>
+          <path d="M12 7v5.5l3.5 2" stroke="#065444" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="divorce-nav-text">
+        <h3>Get decision support for your divorce</h3>
+        <p>Answer a few questions and we'll recommend the right tools and resources based on where you are in the process.</p>
+      </div>
+      <button class="btn-primary" onclick="openModal()">Get started</button>
+    </div>
+
+    <!-- Faded content below -->
+    <div class="content-grid" style="opacity:0.45; pointer-events:none;">
+      <div class="content-card">
+        <div class="content-card-title">Parenting plan checklist</div>
+        <div class="placeholder-bar med"></div>
+        <div class="placeholder-bar short"></div>
+        <div class="placeholder-bar med"></div>
+      </div>
+      <div class="content-card">
+        <div class="content-card-title">Payment tracking</div>
+        <div class="placeholder-bar short"></div>
+        <div class="placeholder-bar med"></div>
+        <div class="placeholder-bar short"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Demo re-open button -->
+<button class="demo-trigger" onclick="openModal()">↑ Re-open modal</button>
+
+
+<!-- ══════════════════════════════════════
+     MODAL
+══════════════════════════════════════ -->
+<div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal" id="modal">
+    <button class="modal-dismiss" onclick="closeModal()" aria-label="Close">
+      <svg viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="#002B14" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+
+    <!-- ─────────────────────────────────
+         STEP 0 — Hook / invitation
+    ───────────────────────────────────── -->
+    <div class="modal-step active" id="step0">
+      <div class="step0-body">
+        <div class="step0-glyph">
+          <svg viewBox="0 0 32 32" fill="none">
+            <path d="M16 4C9.37 4 4 9.37 4 16s5.37 12 12 12 12-5.37 12-12S22.63 4 16 4Z" stroke="#065444" stroke-width="1.8"/>
+            <path d="M16 10v6.5l4 2.5" stroke="#065444" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="step0-title">Want more support<br>with your divorce?</div>
+        <div class="step0-sub">We've added more tools to understand your options, draft a parenting plan, and figure out next steps — all in one place.</div>
+        <div class="step0-pills">
+          <span class="step0-pill">Parenting plan builder</span>
+          <span class="step0-pill">Messages</span>
+          <span class="step0-pill">Payment tracking</span>
+          <span class="step0-pill">Schedule change requests</span>
+        </div>
+      </div>
+      <div class="step0-footer">
+        <button class="btn-primary" onclick="goToStep1()">I'm Interested</button>
+        <button class="btn-ghost" onclick="closeModal()">Not right now</button>
+      </div>
+    </div>
+
+    <!-- ─────────────────────────────────
+         STEP 1 — Pre-screening question
+    ───────────────────────────────────── -->
+    <div class="modal-step active" id="step1">
+      <div class="step1-hero">
+        <div class="step1-progress">
+          <div class="progress-dot active"></div>
+          <div class="progress-dot"></div>
+        </div>
+        <div class="step1-hero-title" id="modalTitle">How are you handling your case?</div>
+        <div class="step1-hero-sub">One question helps us tailor the support for your divorce.</div>
+      </div>
+
+      <div class="modal-body">
+        <div class="choice-group" id="choiceGroup">
+
+          <label class="choice-item" onclick="selectChoice(this, 'attorney')">
+            <div class="choice-radio"><div class="choice-radio-dot"></div></div>
+            <div class="choice-text">
+              <div class="choice-label">I'm working with an attorney or mediator</div>
+              <div class="choice-desc">A lawyer or mediator is guiding or representing me in the process</div>
+            </div>
+          </label>
+
+          <label class="choice-item" onclick="selectChoice(this, 'prose')">
+            <div class="choice-radio"><div class="choice-radio-dot"></div></div>
+            <div class="choice-text">
+              <div class="choice-label">No legal representation</div>
+              <div class="choice-desc">I plan to navigate without legal representation</div>
+            </div>
+          </label>
+
+          <label class="choice-item" onclick="selectChoice(this, 'unsure')">
+            <div class="choice-radio"><div class="choice-radio-dot"></div></div>
+            <div class="choice-text">
+              <div class="choice-label">I'm not sure yet</div>
+              <div class="choice-desc">I'm still researching my options</div>
+            </div>
+          </label>
+
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-primary" id="continueBtn" onclick="goToStep2()" disabled style="opacity:0.45;cursor:default;">Continue</button>
+        <button class="btn-ghost" onclick="closeModal()">Maybe later</button>
+      </div>
+    </div>
+
+
+    <!-- ─────────────────────────────────
+         STEP 2A — OFW promo (attorney)
+    ───────────────────────────────────── -->
+    <div class="modal-step" id="step2a">
+
+      <div class="ofw-topbar">
+        <div class="ofw-logo-wrap">
+          <img src="https://cdn.prod.website-files.com/66f46f0c9326a49e78332d4a/6750a25e0e0bb426540a85bb_ofw%20logo%20-%20horizontal%20new.png" alt="OurFamilyWizard">
+        </div>
+        <div class="ofw-exclusive-badge">Exclusive offer · $300 value</div>
+      </div>
+
+      <div class="ofw-content">
+        <div class="ofw-headline">Get a free year of the<br>#1 co-parenting app</div>
+        <div class="ofw-on-us-wrap"><span class="ofw-on-us">on us</span></div>
+        <p class="ofw-desc">OurFamilyWizard, part of our family of apps, brings your schedule, messages, and expenses into one shared place.</p>
+
+        <div class="ofw-check-list">
+          <div class="ofw-check-row">
+            <div class="ofw-check-circle">
+              <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5L9 3" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            Shared calendar with holidays, synced with your co-parent
+          </div>
+          <div class="ofw-check-row">
+            <div class="ofw-check-circle">
+              <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5L9 3" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            Court-admissible messages, expense log, and journal
+          </div>
+          <div class="ofw-check-row">
+            <div class="ofw-check-circle">
+              <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M2 5.5l2.5 2.5L9 3" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            One place for medical, school, and emergency info
+          </div>
+        </div>
+      </div>
+
+      <div class="ofw-cta-area">
+        <button class="ofw-get-started-btn" onclick="closeModal()">
+          Get Started
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="ofw-not-now-btn" onclick="closeModal()">Not now — keep building my schedule</button>
+      </div>
+
+      <div class="ofw-footer-trust">
+        <svg width="13" height="14" viewBox="0 0 13 14" fill="none"><path d="M6.5 1L1 3.5v4C1 10.5 3.5 13 6.5 13S12 10.5 12 7.5v-4L6.5 1Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+        Trusted by 1M+ co-parents
+      </div>
+
+    </div>
+
+
+    <!-- ─────────────────────────────────
+         STEP 2B — Claude subscription pitch
+    ───────────────────────────────────── -->
+    <div class="modal-step" id="step2b">
+      <div class="modal-header-bar">
+        <div class="modal-progress">
+          <div class="progress-dot done"></div>
+          <div class="progress-dot active"></div>
+        </div>
+        <div class="modal-title">Divorce Navigator</div>
+        <div class="modal-subtitle">Suite of co-parenting tools built for people navigating divorce on their own or are still researching their options.</div>
+      </div>
+
+      <div class="modal-body">
+        <div class="feature-list">
+
+          <div class="feature-row">
+            <div class="feature-icon">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M8 1C4.13 1 1 4.13 1 8s3.13 7 7 7 7-3.13 7-7-3.13-7-7-7Z" stroke="#065444" stroke-width="1.5"/><path d="M5.5 8l2 2 3-4" stroke="#065444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="feature-text"><strong>Digital assistant</strong> to draft a parenting plan, prepare for court, and understand your options</div>
+          </div>
+
+          <div class="feature-row">
+            <div class="feature-icon">
+              <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="#065444" stroke-width="1.5"/><path d="M2 6h12" stroke="#065444" stroke-width="1.5"/><path d="M5 1v2M11 1v2" stroke="#065444" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div class="feature-text"><strong>Custody schedule</strong> with schedule change requests and change log</div>
+          </div>
+
+          <div class="feature-row">
+            <div class="feature-icon">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M4 8h8M6 12h4" stroke="#065444" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div class="feature-text"><strong>Track and manage</strong> shared expenses</div>
+          </div>
+
+          <div class="feature-row">
+            <div class="feature-icon">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M2 2h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V2Z" stroke="#065444" stroke-width="1.5"/><path d="M5 6h6M5 9h4" stroke="#065444" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div class="feature-text"><strong>Send messages</strong> and download court-ready message reports</div>
+          </div>
+
+        </div>
+
+        <div class="pricing-callout">
+          <div>
+            <div class="pricing-amount">$49.99</div>
+            <div class="pricing-period">per year · cancel anytime</div>
+          </div>
+          <div class="pricing-trial">14-day free trial</div>
+        </div>
+        <p class="modal-fine-print">No charge for 14 days. You won't be billed until your trial ends.</p>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-primary" onclick="closeModal()">Start your free 14-day trial</button>
+        <button class="btn-ghost" onclick="closeModal()">Maybe later</button>
+      </div>
+    </div>
+
+  </div><!-- /modal -->
+</div><!-- /backdrop -->
+
+
+<script>
+  let selectedValue = null;
+
+  function openModal() {
+    const backdrop = document.getElementById('modalBackdrop');
+    backdrop.classList.add('visible');
+    document.getElementById('step0').classList.add('active');
+    document.getElementById('step1').classList.remove('active');
+    document.getElementById('step2a').classList.remove('active');
+    document.getElementById('step2b').classList.remove('active');
+    selectedValue = null;
+    document.querySelectorAll('.choice-item').forEach(el => el.classList.remove('selected'));
+    const btn = document.getElementById('continueBtn');
+    btn.disabled = true;
+    btn.style.opacity = '0.45';
+    btn.style.cursor = 'default';
+  }
+
+  function closeModal() {
+    document.getElementById('modalBackdrop').classList.remove('visible');
+  }
+
+  function goToStep1() {
+    document.getElementById('step0').classList.remove('active');
+    document.getElementById('step1').classList.add('active');
+  }
+
+  function selectChoice(el, value) {
+    document.querySelectorAll('.choice-item').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedValue = value;
+    const btn = document.getElementById('continueBtn');
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    btn.style.cursor = 'pointer';
+  }
+
+  function goToStep2() {
+    if (!selectedValue) return;
+    document.getElementById('step0').classList.remove('active');
+    document.getElementById('step1').classList.remove('active');
+    if (selectedValue === 'attorney') {
+      document.getElementById('step2a').classList.add('active');
+    } else {
+      document.getElementById('step2b').classList.add('active');
+    }
+  }
+
+  function goToStep2B() {
+    document.getElementById('step2a').classList.remove('active');
+    document.getElementById('step2b').classList.add('active');
+  }
+
+  // Close on backdrop click
+  document.getElementById('modalBackdrop').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  // Close on Escape
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  // Auto-open on load
+  window.addEventListener('load', () => setTimeout(openModal, 400));
+</script>
+
+</body>
+</html>
