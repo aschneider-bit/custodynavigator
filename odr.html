@@ -1,0 +1,1813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Divorce Navigator — Custody Navigator</title>
+<style>
+  :root {
+    --cn-forest: #002B14;
+    --cn-green: #065444;
+    --cn-green-mid: #0A9373;
+    --cn-green-light: #6DCAB7;
+    --cn-green-pale: #DEF1E7;
+    --cn-bg: #F9F4ED;
+    --cn-surface: #FFFFFF;
+    --cn-surface-warm: #F8F2EB;
+    --cn-outline: #B2A799;
+    --cn-outline-light: #EDDFCC;
+    --cn-text: #002B14;
+    --cn-text-sec: #3B342A;
+    --cn-text-muted: #777066;
+    --cn-parent-a: #FD8E3F;
+    --cn-parent-a-light: #FCC49C;
+    --cn-parent-b: #8EA5DB;
+    --cn-parent-b-light: #D3DCF1;
+    --cn-red: #AD4141;
+    --cn-amber: #B2622B;
+    --cn-taupe: #777066;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'HK Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--cn-bg);
+    color: var(--cn-text);
+    min-height: 100vh;
+  }
+
+  /* ---------- HIDDEN / SHOWN SCREENS ---------- */
+  .screen { display: none; }
+  .screen.active { display: flex; flex-direction: column; min-height: 100vh; }
+
+  /* ---------- TOP NAV ---------- */
+  .top-nav {
+    background: var(--cn-forest);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .top-nav .logo {
+    color: #fff;
+    font-weight: 900;
+    font-size: 18px;
+    letter-spacing: 0.05em;
+  }
+  .top-nav .logo span { color: var(--cn-green-light); }
+  .top-nav .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: rgba(255,255,255,0.7);
+    font-size: 14px;
+  }
+  .top-nav .nav-right a { color: rgba(255,255,255,0.7); text-decoration: none; cursor: pointer; }
+  .top-nav .nav-right a:hover { color: #fff; }
+
+  /* ---------- STAGE PROGRESS BAR ---------- */
+  .stage-bar {
+    background: var(--cn-surface);
+    border-bottom: 1px solid var(--cn-outline-light);
+    padding: 0 24px;
+    display: flex;
+    align-items: stretch;
+    overflow-x: auto;
+    flex-shrink: 0;
+  }
+  .stage-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--cn-text-muted);
+    white-space: nowrap;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.15s;
+  }
+  .stage-item:hover { color: var(--cn-green); }
+  .stage-item.active { color: var(--cn-green); border-bottom-color: var(--cn-green); }
+  .stage-item.done { color: var(--cn-green-mid); }
+  .stage-item .stage-num {
+    width: 22px; height: 22px;
+    border-radius: 9999px;
+    background: var(--cn-outline-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+  }
+  .stage-item.active .stage-num { background: var(--cn-green); color: #fff; }
+  .stage-item.done .stage-num { background: var(--cn-green-mid); color: #fff; }
+
+  /* ---------- CONTENT AREA ---------- */
+  .content { flex: 1; padding: 40px 24px; max-width: 760px; margin: 0 auto; width: 100%; }
+  .content-wide { flex: 1; padding: 32px 24px; max-width: 1040px; margin: 0 auto; width: 100%; }
+
+  /* ---------- TYPOGRAPHY ---------- */
+  .eyebrow {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
+    color: var(--cn-green-mid); text-transform: uppercase; margin-bottom: 8px;
+  }
+  h1 { font-size: 32px; font-weight: 900; line-height: 1.2; margin-bottom: 12px; }
+  h2 { font-size: 24px; font-weight: 700; line-height: 1.3; margin-bottom: 12px; }
+  h3 { font-size: 18px; font-weight: 700; line-height: 1.3; margin-bottom: 8px; }
+  p { font-size: 15px; font-weight: 300; line-height: 1.6; color: var(--cn-text-sec); }
+  .text-muted { color: var(--cn-text-muted); font-size: 13px; }
+
+  /* ---------- BUTTONS ---------- */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 24px;
+    border-radius: 9999px;
+    font-size: 15px; font-weight: 700;
+    cursor: pointer; border: none; text-decoration: none;
+    transition: all 0.15s;
+  }
+  .btn-primary { background: var(--cn-green); color: #fff; }
+  .btn-primary:hover { background: var(--cn-green-mid); }
+  .btn-secondary { background: transparent; color: var(--cn-green); border: 2px solid var(--cn-green); }
+  .btn-secondary:hover { background: var(--cn-green-pale); }
+  .btn-ghost { background: transparent; color: var(--cn-text-muted); }
+  .btn-ghost:hover { color: var(--cn-text); }
+  .btn-sm { padding: 8px 16px; font-size: 13px; }
+  .btn-danger { background: var(--cn-red); color: #fff; }
+  .btn-accept { background: var(--cn-green-mid); color: #fff; }
+
+  /* ---------- CARDS ---------- */
+  .card {
+    background: var(--cn-surface);
+    border-radius: 12px;
+    border: 1px solid var(--cn-outline-light);
+    padding: 24px;
+  }
+  .card + .card { margin-top: 16px; }
+
+  /* ---------- FORM ELEMENTS ---------- */
+  label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  input[type=text], input[type=email], select, textarea {
+    width: 100%; padding: 12px;
+    border: 1.5px solid var(--cn-outline);
+    border-radius: 8px;
+    font-family: inherit; font-size: 15px;
+    background: var(--cn-surface); color: var(--cn-text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--cn-green); }
+  .form-group { margin-bottom: 20px; }
+  .form-hint { font-size: 13px; color: var(--cn-text-muted); margin-top: 4px; }
+
+  /* ---------- RADIO / OPTION CARDS ---------- */
+  .option-card {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 16px 20px;
+    background: var(--cn-surface);
+    border: 2px solid var(--cn-outline-light);
+    border-radius: 12px; cursor: pointer;
+    margin-bottom: 12px;
+    transition: all 0.15s;
+  }
+  .option-card:hover { border-color: var(--cn-green-light); }
+  .option-card.selected { border-color: var(--cn-green); background: var(--cn-green-pale); }
+  .option-card .radio-dot {
+    width: 20px; height: 20px; border-radius: 9999px;
+    border: 2px solid var(--cn-outline);
+    flex-shrink: 0; margin-top: 2px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .option-card.selected .radio-dot { border-color: var(--cn-green); }
+  .option-card.selected .radio-dot::after {
+    content: ''; width: 10px; height: 10px;
+    border-radius: 9999px; background: var(--cn-green);
+  }
+  .option-card .option-label { font-weight: 700; font-size: 15px; }
+  .option-card .option-desc { font-size: 13px; color: var(--cn-text-muted); margin-top: 2px; }
+
+  /* ---------- PROGRESS / BADGE ---------- */
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 10px; border-radius: 9999px;
+    font-size: 12px; font-weight: 700;
+  }
+  .badge-green { background: var(--cn-green-pale); color: var(--cn-green); }
+  .badge-amber { background: #FFF0E0; color: var(--cn-amber); }
+  .badge-gray { background: var(--cn-outline-light); color: var(--cn-text-muted); }
+  .badge-blue { background: var(--cn-parent-b-light); color: #3A5A9C; }
+  .badge-orange { background: var(--cn-parent-a-light); color: #8A4010; }
+
+  .progress-bar-wrap { background: var(--cn-outline-light); border-radius: 9999px; height: 8px; margin: 8px 0; }
+  .progress-bar-fill { background: var(--cn-green-mid); border-radius: 9999px; height: 8px; transition: width 0.4s; }
+
+  /* ---------- CALLOUT ---------- */
+  .callout {
+    padding: 16px 20px; border-radius: 12px;
+    border-left: 4px solid var(--cn-green);
+    background: var(--cn-green-pale);
+    margin-bottom: 24px;
+  }
+  .callout-amber { border-left-color: var(--cn-amber); background: #FFF4E8; }
+  .callout-red { border-left-color: var(--cn-red); background: #FCEAEA; }
+  .callout p { font-size: 14px; }
+
+  /* ---------- DIVIDER ---------- */
+  hr { border: none; border-top: 1px solid var(--cn-outline-light); margin: 24px 0; }
+
+  /* ---------- LAYOUT HELPERS ---------- */
+  .flex { display: flex; }
+  .items-center { align-items: center; }
+  .justify-between { justify-content: space-between; }
+  .gap-8 { gap: 8px; }
+  .gap-12 { gap: 12px; }
+  .gap-16 { gap: 16px; }
+  .gap-24 { gap: 24px; }
+  .mt-8 { margin-top: 8px; }
+  .mt-16 { margin-top: 16px; }
+  .mt-24 { margin-top: 24px; }
+  .mt-32 { margin-top: 32px; }
+  .mt-40 { margin-top: 40px; }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-16 { margin-bottom: 16px; }
+  .mb-24 { margin-bottom: 24px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .text-center { text-align: center; }
+
+  /* =========================================================
+     STAGE 1 — DIVORCE READINESS QUIZ
+     ========================================================= */
+
+  /* =========================================================
+     STAGE 2 — EDUCATION
+     ========================================================= */
+  .module-row {
+    display: flex; align-items: center; gap: 16px;
+    padding: 16px 20px;
+    background: var(--cn-surface);
+    border: 1px solid var(--cn-outline-light);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .module-row:hover { border-color: var(--cn-green-light); }
+  .module-row.done { opacity: 0.7; }
+  .module-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: var(--cn-green-pale);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .module-icon.done-icon { background: var(--cn-green-pale); }
+  .module-check {
+    width: 24px; height: 24px; border-radius: 9999px;
+    border: 2px solid var(--cn-outline);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-left: auto;
+    font-size: 13px;
+  }
+  .module-check.checked { background: var(--cn-green-mid); border-color: var(--cn-green-mid); color: #fff; }
+
+  /* =========================================================
+     STAGE 3 — INTAKE
+     ========================================================= */
+  .upload-zone {
+    border: 2px dashed var(--cn-outline);
+    border-radius: 12px;
+    padding: 32px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--cn-surface);
+  }
+  .upload-zone:hover { border-color: var(--cn-green); background: var(--cn-green-pale); }
+  .upload-zone .upload-icon { font-size: 32px; margin-bottom: 8px; }
+  .doc-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px;
+    background: var(--cn-surface);
+    border: 1px solid var(--cn-outline-light);
+    border-radius: 8px;
+    margin-bottom: 8px;
+  }
+  .doc-row .doc-icon { font-size: 20px; }
+  .doc-row .doc-name { font-size: 14px; font-weight: 700; flex: 1; }
+  .doc-status-dot {
+    width: 8px; height: 8px; border-radius: 9999px;
+  }
+
+  /* =========================================================
+     STAGE 4 — PARENTING PLAN BUILDER
+     ========================================================= */
+  .plan-sidebar {
+    width: 240px; flex-shrink: 0;
+    background: var(--cn-surface);
+    border-right: 1px solid var(--cn-outline-light);
+    padding: 24px 16px;
+  }
+  .plan-nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: 8px;
+    font-size: 14px; font-weight: 700;
+    cursor: pointer; margin-bottom: 4px;
+    transition: all 0.15s;
+  }
+  .plan-nav-item:hover { background: var(--cn-green-pale); }
+  .plan-nav-item.active { background: var(--cn-green); color: #fff; }
+  .plan-nav-item .check-sm {
+    width: 18px; height: 18px; border-radius: 9999px;
+    border: 2px solid currentColor;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; flex-shrink: 0; margin-left: auto;
+  }
+  .plan-nav-item.done-item .check-sm { background: var(--cn-green-mid); border-color: var(--cn-green-mid); color: #fff; }
+  .plan-nav-item.active .check-sm { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.5); }
+  .plan-main { flex: 1; padding: 32px; overflow-y: auto; }
+
+  .schedule-grid {
+    display: grid;
+    grid-template-columns: 80px repeat(7, 1fr);
+    gap: 4px; margin-top: 16px;
+  }
+  .sched-header {
+    background: var(--cn-forest);
+    color: #fff; border-radius: 6px;
+    padding: 8px 4px; text-align: center;
+    font-size: 12px; font-weight: 700;
+  }
+  .sched-label {
+    display: flex; align-items: center;
+    font-size: 12px; font-weight: 700; color: var(--cn-text-muted);
+    padding: 4px 8px;
+  }
+  .sched-cell {
+    border-radius: 6px; height: 40px;
+    cursor: pointer; transition: all 0.15s;
+    border: 2px solid transparent;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+  }
+  .sched-cell:hover { transform: scale(1.05); }
+  .sched-cell.pa { background: var(--cn-parent-a); color: #fff; }
+  .sched-cell.pb { background: var(--cn-parent-b); color: #fff; }
+  .sched-cell.empty { background: var(--cn-outline-light); }
+
+  /* =========================================================
+     STAGE 5 — ODR NEGOTIATION
+     ========================================================= */
+  .odr-layout {
+    display: flex; flex: 1; min-height: 0;
+  }
+  .odr-sidebar {
+    width: 220px; flex-shrink: 0;
+    background: var(--cn-surface);
+    border-right: 1px solid var(--cn-outline-light);
+    padding: 0;
+    display: flex; flex-direction: column;
+  }
+  .odr-sidebar-section {
+    padding: 16px;
+    border-bottom: 1px solid var(--cn-outline-light);
+    font-size: 13px;
+  }
+  .odr-sidebar-section h4 { font-size: 12px; font-weight: 700; color: var(--cn-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+  .odr-sidebar-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px; border-radius: 8px;
+    font-size: 13px; font-weight: 700; cursor: pointer;
+    margin-bottom: 2px; color: var(--cn-text-muted);
+  }
+  .odr-sidebar-item:hover { background: var(--cn-green-pale); color: var(--cn-green); }
+  .odr-sidebar-item.active { background: var(--cn-green-pale); color: var(--cn-green); }
+  .odr-main { flex: 1; overflow-y: auto; padding: 32px; }
+
+  .topic-progress {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 32px;
+  }
+  .topic-chip {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    padding: 8px 12px; border-radius: 12px;
+    font-size: 11px; font-weight: 700;
+    cursor: pointer; min-width: 72px;
+    border: 2px solid transparent;
+    transition: all 0.15s;
+  }
+  .topic-chip .topic-icon { font-size: 20px; }
+  .topic-chip.agreed { background: var(--cn-green-pale); color: var(--cn-green); border-color: var(--cn-green-light); }
+  .topic-chip.pending { background: #FFF4E8; color: var(--cn-amber); border-color: var(--cn-parent-a-light); }
+  .topic-chip.open { background: var(--cn-surface); color: var(--cn-text-muted); border-color: var(--cn-outline-light); }
+  .topic-chip.active { background: var(--cn-forest); color: #fff; border-color: var(--cn-forest); }
+
+  .proposal-card {
+    border: 2px solid var(--cn-outline-light);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .proposal-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--cn-outline-light);
+  }
+  .proposal-header.pa { background: #FFF4EC; border-bottom-color: var(--cn-parent-a-light); }
+  .proposal-header.pb { background: #EEF1FA; border-bottom-color: var(--cn-parent-b-light); }
+  .parent-dot {
+    width: 32px; height: 32px; border-radius: 9999px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px; flex-shrink: 0;
+  }
+  .parent-dot.pa { background: var(--cn-parent-a); color: #fff; }
+  .parent-dot.pb { background: var(--cn-parent-b); color: #fff; }
+  .proposal-body { padding: 16px; background: var(--cn-surface); }
+  .proposal-actions { padding: 12px 16px; background: var(--cn-surface-warm); display: flex; gap: 8px; border-top: 1px solid var(--cn-outline-light); }
+
+  .dispute-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;
+  }
+  .dispute-col {
+    border-radius: 12px; padding: 16px;
+  }
+  .dispute-col.pa-col { background: #FFF4EC; }
+  .dispute-col.pb-col { background: #EEF1FA; }
+
+  /* =========================================================
+     STAGE 6 — E-SIGNATURE
+     ========================================================= */
+  .agreement-preview {
+    background: var(--cn-surface);
+    border: 1px solid var(--cn-outline-light);
+    border-radius: 12px;
+    padding: 32px;
+    font-family: Georgia, serif;
+    line-height: 1.8;
+  }
+  .agreement-preview h3 { font-family: inherit; text-align: center; margin-bottom: 24px; }
+  .agreement-preview .section-title { font-weight: bold; text-transform: uppercase; font-size: 13px; margin: 20px 0 8px; border-bottom: 1px solid var(--cn-outline-light); padding-bottom: 4px; }
+  .agreement-preview p { font-size: 13px; color: var(--cn-text-sec); }
+
+  .sig-box {
+    border: 2px dashed var(--cn-outline);
+    border-radius: 8px; padding: 20px 16px;
+    text-align: center; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .sig-box:hover { border-color: var(--cn-green); background: var(--cn-green-pale); }
+  .sig-box.signed { border-style: solid; border-color: var(--cn-green-mid); background: var(--cn-green-pale); }
+  .sig-line { font-family: Georgia, serif; font-style: italic; font-size: 24px; color: var(--cn-green); }
+
+  /* =========================================================
+     ATTORNEY REFERRAL SCREEN
+     ========================================================= */
+  .referral-hero {
+    background: var(--cn-forest);
+    border-radius: 16px;
+    padding: 40px 32px;
+    text-align: center;
+    color: #fff;
+    margin-bottom: 32px;
+  }
+  .referral-hero h2 { color: #fff; }
+  .referral-hero p { color: rgba(255,255,255,0.8); }
+
+  /* =========================================================
+     SUCCESS / COMPLETION
+     ========================================================= */
+  .success-hero {
+    background: var(--cn-green);
+    border-radius: 16px;
+    padding: 48px 32px;
+    text-align: center;
+    color: #fff;
+    margin-bottom: 32px;
+  }
+  .success-icon { font-size: 56px; margin-bottom: 16px; }
+  .success-hero h2 { color: #fff; font-size: 28px; margin-bottom: 8px; }
+  .success-hero p { color: rgba(255,255,255,0.85); }
+
+</style>
+</head>
+<body>
+
+<!-- ================================================================
+     SCREEN: STAGE 1a — WELCOME / ENTRY
+     ================================================================ -->
+<div class="screen active" id="s1-welcome">
+  <nav class="top-nav">
+    <div class="logo">Custody<span>Navigator</span></div>
+    <div class="nav-right"><a>My account</a></div>
+  </nav>
+  <div class="content" style="display:flex;flex-direction:column;justify-content:center;padding-top:60px;">
+    <div style="background:var(--cn-forest);border-radius:16px;padding:40px 32px;color:#fff;margin-bottom:32px;">
+      <div class="eyebrow" style="color:var(--cn-green-light);">Custody Navigator</div>
+      <h1 style="color:#fff;font-size:36px;">Divorce Navigator</h1>
+      <p style="color:rgba(255,255,255,0.8);font-size:16px;max-width:480px;margin-top:8px;">
+        A guided path through uncontested divorce — from first steps to a signed parenting plan — built for families handling this on their own.
+      </p>
+      <div style="display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;">
+        <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;font-size:13px;">
+          <div style="font-weight:700;color:#fff;">6 stages</div>
+          <div style="color:rgba(255,255,255,0.7);">From quiz to filed plan</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;font-size:13px;">
+          <div style="font-weight:700;color:#fff;">~4–6 hours total</div>
+          <div style="color:rgba(255,255,255,0.7);">Save and return anytime</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.1);border-radius:12px;padding:12px 16px;font-size:13px;">
+          <div style="font-weight:700;color:#fff;">Court-ready output</div>
+          <div style="color:rgba(255,255,255,0.7);">Signed parenting plan</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:16px;">
+      <h3>Before you begin</h3>
+      <p style="margin-top:8px;">Divorce Navigator works best for uncontested situations where both parents are willing to reach an agreement. We'll check your situation first and recommend the right path for you.</p>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center;">
+      <button class="btn btn-primary" onclick="go('s1-quiz-location')">Get started →</button>
+      <button class="btn btn-ghost btn-sm" onclick="">I already have an account</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     SCREEN: STAGE 1b — QUIZ: STATE
+     ================================================================ -->
+<div class="screen" id="s1-quiz-location">
+  <nav class="top-nav">
+    <div class="logo">Custody<span>Navigator</span></div>
+    <div class="nav-right"><a onclick="go('s1-welcome')">← Back</a></div>
+  </nav>
+  <div class="content">
+    <div class="eyebrow">Readiness quiz · Step 1 of 4</div>
+    <h2>Where is your divorce taking place?</h2>
+    <p style="margin-bottom:24px;">Each state has its own filing rules and forms. We'll make sure you're on the right track.</p>
+    <div class="form-group">
+      <label>Your state</label>
+      <select onchange="this.value && document.getElementById('loc-next').removeAttribute('disabled')">
+        <option value="">Select a state…</option>
+        <option value="MN" selected>Minnesota</option>
+        <option value="WI">Wisconsin</option>
+        <option value="IA">Iowa</option>
+        <option value="ND">North Dakota</option>
+        <option value="SD">South Dakota</option>
+        <option value="IL">Illinois</option>
+        <option value="other">Other state…</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>County (for court filing)</label>
+      <select>
+        <option>Hennepin County</option>
+        <option>Ramsey County</option>
+        <option>Dakota County</option>
+        <option>Anoka County</option>
+        <option>Washington County</option>
+        <option>Scott County</option>
+      </select>
+    </div>
+    <div class="callout">
+      <p><strong>We support Minnesota pro se filing</strong> — our forms match the Minnesota Judicial Branch dissolution form series. We'll guide you through the process and help you prepare court-ready documents.</p>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:8px;">
+      <button class="btn btn-primary" id="loc-next" onclick="go('s1-quiz-complexity')">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     SCREEN: STAGE 1c — QUIZ: COMPLEXITY SCREENER
+     ================================================================ -->
+<div class="screen" id="s1-quiz-complexity">
+  <nav class="top-nav">
+    <div class="logo">Custody<span>Navigator</span></div>
+    <div class="nav-right"><a onclick="go('s1-quiz-location')">← Back</a></div>
+  </nav>
+  <div class="content">
+    <div class="eyebrow">Readiness quiz · Step 2 of 4</div>
+    <h2>A few questions about your situation</h2>
+    <p style="margin-bottom:24px;">Your honest answers help us make sure Divorce Navigator is the right fit — or recommend a better path if not.</p>
+
+    <div class="card" style="margin-bottom:16px;">
+      <h3 style="margin-bottom:16px;">Does this describe your situation?</h3>
+
+      <div style="margin-bottom:20px;">
+        <div style="font-weight:700;font-size:15px;margin-bottom:10px;">Both parents are willing to discuss terms — even if you don't agree yet</div>
+        <div style="display:flex;gap:8px;">
+          <div class="option-card selected" style="margin:0;flex:1;" onclick="selectOpt(this,'.q1')">
+            <div class="radio-dot"></div>
+            <div><div class="option-label">Yes</div></div>
+          </div>
+          <div class="option-card q1" style="margin:0;flex:1;" onclick="selectOpt(this,'.q1')">
+            <div class="radio-dot"></div>
+            <div><div class="option-label">No / not sure</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <div style="font-weight:700;font-size:15px;margin-bottom:10px;">There is no history of domestic abuse or coercive control in this relationship</div>
+        <div style="display:flex;gap:8px;">
+          <div class="option-card selected" style="margin:0;flex:1;" onclick="selectOpt(this,'.q2')">
+            <div class="radio-dot"></div>
+            <div><div class="option-label">Correct</div></div>
+          </div>
+          <div class="option-card q2" style="margin:0;flex:1;" onclick="selectOpt(this,'.q2')">
+            <div class="radio-dot"></div>
+            <div><div class="option-label">Not correct / prefer not to say</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-weight:700;font-size:15px;margin-bottom:10px;">Neither parent is seeking sole legal custody based on serious safety concerns</div>
+        <div style="display:flex;gap:8px;">
+          <div class="option-card selected" style="margin:0;flex:1;" onclick="selectOpt(this,'.q3')">
+            <div class="radio-dot"></div>
+            <div><div class="option-label">Correct</div></div>
+          </div>
+          <div class="option-card q3" style="margin:0;flex:1;" onclick="selectOpt(this,'.q3')">
+            <div class="radio-dot"></div>
+            <div><div class="option-label">Not correct</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px;margin-top:8px;">
+      <button class="btn btn-primary" onclick="go('s1-quiz-readiness')">Continue →</button>
+      <button class="btn btn-secondary" onclick="go('s1-attorney-referral')">I have concerns — show me other options</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     SCREEN: STAGE 1d — QUIZ: READINESS
+     ================================================================ -->
+<div class="screen" id="s1-quiz-readiness">
+  <nav class="top-nav">
+    <div class="logo">Custody<span>Navigator</span></div>
+    <div class="nav-right"><a onclick="go('s1-quiz-complexity')">← Back</a></div>
+  </nav>
+  <div class="content">
+    <div class="eyebrow">Readiness quiz · Step 3 of 4</div>
+    <h2>Tell us about your family</h2>
+    <p style="margin-bottom:24px;">This shapes your parenting plan and what we ask for during intake.</p>
+    <div class="card" style="margin-bottom:16px;">
+      <div class="form-group">
+        <label>Parent A (you)</label>
+        <input type="text" value="Alex Rivera" />
+      </div>
+      <div class="form-group">
+        <label>Parent B (the other parent)</label>
+        <input type="text" value="Jordan Rivera" />
+      </div>
+      <div class="form-group">
+        <label>How many children?</label>
+        <select>
+          <option>1</option>
+          <option selected>2</option>
+          <option>3</option>
+          <option>4+</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label>Children's names and ages</label>
+        <div style="display:flex;gap:8px;margin-bottom:8px;">
+          <input type="text" value="Maya Rivera" style="flex:2;" />
+          <input type="text" value="8 years old" style="flex:1;" />
+        </div>
+        <div style="display:flex;gap:8px;">
+          <input type="text" value="Theo Rivera" style="flex:2;" />
+          <input type="text" value="5 years old" style="flex:1;" />
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:8px;">
+      <button class="btn btn-primary" onclick="go('s1-quiz-result')">Continue →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     SCREEN: STAGE 1e — QUIZ RESULT / YOU'RE READY
+     ================================================================ -->
+<div class="screen" id="s1-quiz-result">
+  <nav class="top-nav">
+    <div class="logo">Custody<span>Navigator</span></div>
+    <div class="nav-right"><a onclick="go('s1-quiz-readiness')">← Back</a></div>
+  </nav>
+  <div class="content">
+    <div style="background:var(--cn-green);border-radius:16px;padding:36px 32px;color:#fff;margin-bottom:24px;text-align:center;">
+      <div style="font-size:48px;margin-bottom:12px;">✓</div>
+      <h2 style="color:#fff;">You're a good fit for Divorce Navigator</h2>
+      <p style="color:rgba(255,255,255,0.85);margin-top:8px;">Based on your answers, you and Jordan are in a position to negotiate your parenting plan together — and we can guide you through the whole process.</p>
+    </div>
+    <div class="card" style="margin-bottom:16px;">
+      <h3>Your path ahead</h3>
+      <div style="margin-top:16px;">
+        <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;">
+          <div style="width:32px;height:32px;border-radius:9999px;background:var(--cn-green);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;">1</div>
+          <div><div style="font-weight:700;">Divorce education</div><div class="text-muted">5 short modules — understand your rights and options (~30 min)</div></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;">
+          <div style="width:32px;height:32px;border-radius:9999px;background:var(--cn-green);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;">2</div>
+          <div><div style="font-weight:700;">Gather financial documents</div><div class="text-muted">A checklist of what you'll need (~15 min)</div></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;">
+          <div style="width:32px;height:32px;border-radius:9999px;background:var(--cn-green);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;">3</div>
+          <div><div style="font-weight:700;">Build your parenting plan</div><div class="text-muted">Schedule, decision-making, holidays — your first draft (~45 min)</div></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;">
+          <div style="width:32px;height:32px;border-radius:9999px;background:var(--cn-green);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;">4</div>
+          <div><div style="font-weight:700;">Negotiate with Jordan</div><div class="text-muted">Online dispute resolution — propose, respond, agree (~varies)</div></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:32px;height:32px;border-radius:9999px;background:var(--cn-green);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0;">5</div>
+          <div><div style="font-weight:700;">Sign and file</div><div class="text-muted">E-signature and optional court e-filing (~20 min)</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="callout">
+      <p><strong>Divorce Navigator is a Pro feature.</strong> Your first two stages are free. Access to the parenting plan builder, ODR negotiation, and e-filing requires a Custody Navigator Pro subscription ($29/month).</p>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:8px;">
+      <button class="btn btn-primary" onclick="go('s2-education')">Start with education →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     SCREEN: ATTORNEY REFERRAL (branch from complexity screener)
+     ================================================================ -->
+<div class="screen" id="s1-attorney-referral">
+  <nav class="top-nav">
+    <div class="logo">Custody<span>Navigator</span></div>
+    <div class="nav-right"><a onclick="go('s1-quiz-complexity')">← Back</a></div>
+  </nav>
+  <div class="content">
+    <div class="referral-hero">
+      <div style="font-size:40px;margin-bottom:12px;">🤝</div>
+      <h2>This situation may benefit from professional support</h2>
+      <p style="margin-top:8px;">Based on what you've shared, Divorce Navigator — which is designed for uncontested situations — may not give you the protection you need. A family law attorney or mediator can help.</p>
+    </div>
+    <div class="card" style="margin-bottom:16px;">
+      <h3>Options for your situation</h3>
+      <div style="margin-top:16px;display:flex;flex-direction:column;gap:12px;">
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:16px;border:1px solid var(--cn-outline-light);border-radius:12px;">
+          <div style="font-size:24px;">⚖️</div>
+          <div>
+            <div style="font-weight:700;">Find a family law attorney</div>
+            <div class="text-muted">We can connect you with a licensed attorney in Minnesota who specializes in contested custody.</div>
+            <button class="btn btn-primary btn-sm" style="margin-top:12px;">Connect me with an attorney</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:16px;border:1px solid var(--cn-outline-light);border-radius:12px;">
+          <div style="font-size:24px;">🛡️</div>
+          <div>
+            <div style="font-weight:700;">Domestic violence resources</div>
+            <div class="text-muted">If you're concerned about your safety or your children's safety, get help now — before any legal process begins.</div>
+            <button class="btn btn-secondary btn-sm" style="margin-top:12px;">See resources →</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:16px;border:1px solid var(--cn-outline-light);border-radius:12px;">
+          <div style="font-size:24px;">💬</div>
+          <div>
+            <div style="font-weight:700;">Family mediation</div>
+            <div class="text-muted">A neutral mediator can help both parents reach agreement — often less expensive than litigation.</div>
+            <button class="btn btn-secondary btn-sm" style="margin-top:12px;">Learn about mediation →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:8px;">
+      <button class="btn btn-ghost btn-sm" onclick="go('s1-quiz-readiness')">My situation has changed — continue with Divorce Navigator</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     SCREEN: STAGE 2 — EDUCATION
+     ================================================================ -->
+<div class="screen" id="s2-education">
+  <nav class="top-nav">
+    <div class="logo">Custody<span>Navigator</span></div>
+    <div class="nav-right"><span style="color:rgba(255,255,255,0.6);">Alex Rivera</span></div>
+  </nav>
+  <div class="stage-bar">
+    <div class="stage-item done" onclick="go('s1-quiz-result')"><div class="stage-num">✓</div>Readiness quiz</div>
+    <div class="stage-item active"><div class="stage-num">2</div>Education</div>
+    <div class="stage-item" onclick=""><div class="stage-num">3</div>Intake</div>
+    <div class="stage-item"><div class="stage-num">4</div>Parenting plan</div>
+    <div class="stage-item"><div class="stage-num">5</div>Negotiate</div>
+    <div class="stage-item"><div class="stage-num">6</div>Sign &amp; file</div>
+  </div>
+  <div class="content">
+    <div class="eyebrow">Stage 2 of 6</div>
+    <h2>Divorce education</h2>
+    <p style="margin-bottom:8px;">Understanding the basics makes everything else easier. Work through these 5 modules at your own pace — you can return anytime.</p>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+      <div style="flex:1;"><div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:40%;"></div></div></div>
+      <div class="text-muted">2 of 5 complete</div>
+    </div>
+
+    <div class="module-row done" onclick="go('s2-module')">
+      <div class="module-icon done-icon">📋</div>
+      <div style="flex:1;">
+        <div style="font-weight:700;">How divorce works in Minnesota</div>
+        <div class="text-muted">Filing types, timelines, and what a "default" means · 8 min</div>
+      </div>
+      <div class="module-check checked">✓</div>
+    </div>
+
+    <div class="module-row done" onclick="go('s2-module')">
+      <div class="module-icon done-icon">👨‍👩‍👧</div>
+      <div style="flex:1;">
+        <div style="font-weight:700;">Legal custody vs. physical custody</div>
+        <div class="text-muted">Decision-making rights vs. where your children live · 6 min</div>
+      </div>
+      <div class="module-check checked">✓</div>
+    </div>
+
+    <div class="module-row" onclick="go('s2-module')">
+      <div class="module-icon">💰</div>
+      <div style="flex:1;">
+        <div style="font-weight:700;">Child support basics</div>
+        <div class="text-muted">How it's calculated, what affects it, and how to modify it · 10 min</div>
+      </div>
+      <div class="module-check"></div>
+    </div>
+
+    <div class="module-row" onclick="go('s2-module')">
+      <div class="module-icon">🏠</div>
+      <div style="flex:1;">
+        <div style="font-weight:700;">Property and debt division</div>
+        <div class="text-muted">Equitable distribution rules and what you'll need to disclose · 9 min</div>
+      </div>
+      <div class="module-check"></div>
+    </div>
+
+    <div class="module-row" onclick="go('s2-module')">
+      <div class="module-icon">📝</div>
+      <div style="flex:1;">
+        <div style="font-weight:700;">Parenting plans explained</div>
+        <div class="text-muted">What goes in one, what makes it enforceable, and how to change it · 7 min</div>
+      </div>
+      <div class="module-check"></div>
+    </div>
+
+    <div style="margin-top:32px;display:flex;gap:12px;">
+      <button class="btn btn-primary" onclick="go('s2-module')">Continue: Child support basics →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     SCREEN: STAGE 2 — MODULE DETAIL
+     ================================================================ -->
+<div class="screen" id="s2-module">
+  <nav class="top-nav">
+    <div class="logo">Custody<span>Navigator</span></div>
+    <div class="nav-right"><a onclick="go('s2-education')">← Back to education</a></div>
+  </nav>
+  <div class="stage-bar">
+    <div class="stage-item done"><div class="stage-num">✓</div>Readiness quiz</div>
+    <div class="stage-item active"><div class="stage-num">2</div>Education</div>
+    <div class="stage-item"><div class="stage-num">3</div>Intake</div>
+    <div class="stage-item"><div class="stage-num">4</div>Parenting plan</div>
+    <div class="stage-item"><div class="stage-num">5</div>Negotiate</div>
+    <div class="stage-item"><div class="stage-num">6</div>Sign &amp; file</div>
+  </div>
+  <div class="content">
+    <div class="eyebrow">Module 3 of 5 · 10 min read</div>
+    <h2>Child support basics</h2>
+    <p style="margin-bottom:24px;">Child support in Minnesota is calculated using a formula set by state law — it's not up for negotiation. Understanding how it works puts you in a better position when you sit down with Jordan.</p>
+
+    <div class="card" style="margin-bottom:16px;">
+      <h3>The Minnesota Child Support Guidelines</h3>
+      <p style="margin-top:8px;">Minnesota uses an Income Shares model, which takes into account:</p>
+      <ul style="margin:12px 0 0 20px;line-height:2;font-size:15px;font-weight:300;color:var(--cn-text-sec);">
+        <li>Each parent's monthly net disposable income</li>
+        <li>The percentage of time each parent spends with the children</li>
+        <li>Deductions for health insurance, union dues, and other expenses</li>
+      </ul>
+    </div>
+
+    <div class="callout" style="margin-bottom:16px;">
+      <p><strong>Courts follow this formula almost always.</strong> Deviating from Guideline requires a written agreement from both parents and approval from a judge — it's not common.</p>
+    </div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <h3>What affects the amount?</h3>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:12px;">
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="font-size:18px;">📅</div>
+          <div>
+            <div style="font-weight:700;font-size:14px;">Timeshare</div>
+            <div class="text-muted">More overnight time with the lower-earning parent = less support owed to them</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="font-size:18px;">💼</div>
+          <div>
+            <div style="font-weight:700;font-size:14px;">Income</div>
+            <div class="text-muted">Both parents' incomes are factored in — including self-employment and rental income</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="font-size:18px;">🏥</div>
+          <div>
+            <div style="font-weight:700;font-size:14px;">Health insurance</div>
+            <div class="text-muted">The parent paying for the children's health insurance gets a deduction</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:32px;display:flex;gap:12px;">
+      <button class="btn btn-primary" onclick="go('s2-education')">Mark complete and continue →</button>
+      <button class="btn btn-ghost btn-sm" onclick="go('s2-education')">Save and exit</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     SCREEN: STAGE 3 — INTAKE
+     ================================================================ -->
+<div class="screen" id="s3-intake">
+  <nav class="top-nav">
+    <div class="logo">Custody<span>Navigator</span></div>
+    <div class="nav-right"><span style="color:rgba(255,255,255,0.6);">Alex Rivera</span></div>
+  </nav>
+  <div class="stage-bar">
+    <div class="stage-item done"><div class="stage-num">✓</div>Readiness quiz</div>
+    <div class="stage-item done"><div class="stage-num">✓</div>Education</div>
+    <div class="stage-item active"><div class="stage-num">3</div>Intake</div>
+    <div class="stage-item"><div class="stage-num">4</div>Parenting plan</div>
+    <div class="stage-item"><div class="stage-num">5</div>Negotiate</div>
+    <div class="stage-item"><div class="stage-num">6</div>Sign &amp; file</div>
+  </div>
+  <div class="content">
+    <div class="eyebrow">Stage 3 of 6</div>
+    <h2>Gather your documents</h2>
+    <p style="margin-bottom:8px;">Before you can file for divorce, you'll need to exchange financial disclosures with Jordan. Here's everything you'll need — we'll remind you what's still missing.</p>
+
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+      <div style="flex:1;"><div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:55%;"></div></div></div>
+      <div class="text-muted">6 of 11 items ready</div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <h3>Identity &amp; marriage documents</h3>
+      <div style="margin-top:12px;">
+        <div class="doc-row">
+          <div class="doc-icon">📄</div>
+          <div class="doc-name">Marriage certificate</div>
+          <div class="badge badge-green">Uploaded</div>
+        </div>
+        <div class="doc-row">
+          <div class="doc-icon">🪪</div>
+          <div class="doc-name">Government-issued ID (yours)</div>
+          <div class="badge badge-green">Uploaded</div>
+        </div>
+        <div class="doc-row">
+          <div class="doc-icon">👶</div>
+          <div class="doc-name">Children's birth certificates</div>
+          <div class="badge badge-amber">1 of 2</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <h3>Income &amp; employment</h3>
+      <div style="margin-top:12px;">
+        <div class="doc-row">
+          <div class="doc-icon">📋</div>
+          <div class="doc-name">Last 2 years' tax returns</div>
+          <div class="badge badge-green">Uploaded</div>
+        </div>
+        <div class="doc-row">
+          <div class="doc-icon">💵</div>
+          <div class="doc-name">Recent pay stubs (last 3 months)</div>
+          <div class="badge badge-green">Uploaded</div>
+        </div>
+        <div class="doc-row">
+          <div class="doc-icon">📊</div>
+          <div class="doc-name">Self-employment income records</div>
+          <div class="badge badge-gray">Not applicable</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <h3>Assets &amp; property</h3>
+      <div style="margin-top:12px;">
+        <div class="doc-row">
+          <div class="doc-icon">🏦</div>
+          <div class="doc-name">Bank statements (last 3 months)</div>
+          <div class="badge badge-green">Uploaded</div>
+        </div>
+        <div class="doc-row">
+          <div class="doc-icon">🏠</div>
+          <div class="doc-name">Mortgage statement or deed</div>
+          <div class="badge badge-amber">Missing</div>
+        </div>
+        <div class="doc-row">
+          <div class="doc-icon">💳</div>
+          <div class="doc-name">Credit card statements</div>
+          <div class="badge badge-amber">Missing</div>
+        </div>
+        <div class="doc-row">
+          <div class="doc-icon">📈</div>
+          <div class="doc-name">Investment / retirement accounts</div>
+          <div class="badge badge-amber">Missing</div>
+        </div>
+        <div class="doc-row">
+          <div class="doc-icon">🚗</div>
+          <div class="doc-name">Vehicle titles</div>
+          <div class="badge badge-gray">Skipped</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="upload-zone" style="margin-bottom:24px;">
+      <div class="upload-icon">📁</div>
+      <div style="font-weight:700;margin-bottom:4px;">Upload a document</div>
+      <div class="text-muted">PDF, JPG, or PNG · Up to 20 MB per file</div>
+      <button class="btn btn-secondary btn-sm" style="margin-top:12px;">Choose file</button>
+    </div>
+
+    <div style="display:flex;gap:12px;">
+      <button class="btn btn-primary" onclick="go('s4-plan')">Continue to parenting plan →</button>
+      <button class="btn btn-ghost btn-sm" onclick="">Save and return later</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     SCREEN: STAGE 4 — PARENTING PLAN BUILDER
+     ================================================================ -->
+<div class="screen" id="s4-plan">
+  <nav class="top-nav">
+    <div class="logo">Custody<span>Navigator</span></div>
+    <div class="nav-right"><span style="color:rgba(255,255,255,0.6);">Alex Rivera</span></div>
+  </nav>
+  <div class="stage-bar">
+    <div class="stage-item done"><div class="stage-num">✓</div>Readiness quiz</div>
+    <div class="stage-item done"><div class="stage-num">✓</div>Education</div>
+    <div class="stage-item done"><div class="stage-num">✓</div>Intake</div>
+    <div class="stage-item active"><div class="stage-num">4</div>Parenting plan</div>
+    <div class="stage-item"><div class="stage-num">5</div>Negotiate</div>
+    <div class="stage-item"><div class="stage-num">6</div>Sign &amp; file</div>
+  </div>
+  <div class="odr-layout" style="flex:1;">
+    <div class="plan-sidebar">
+      <div style="padding:16px 12px 8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--cn-text-muted);">Your parenting plan</div>
+      <div class="plan-nav-item done-item">
+        <span>📋</span> Legal custody
+        <div class="check-sm">✓</div>
+      </div>
+      <div class="plan-nav-item done-item">
+        <span>📅</span> Parenting schedule
+        <div class="check-sm">✓</div>
+      </div>
+      <div class="plan-nav-item active" onclick="">
+        <span>🏖️</span> Holidays
+        <div class="check-sm"></div>
+      </div>
+      <div class="plan-nav-item" onclick="">
+        <span>🚗</span> Transportation
+        <div class="check-sm"></div>
+      </div>
+      <div class="plan-nav-item" onclick="">
+        <span>🏫</span> School &amp; activities
+        <div class="check-sm"></div>
+      </div>
+      <div class="plan-nav-item" onclick="">
+        <span>💊</span> Healthcare
+        <div class="check-sm"></div>
+      </div>
+      <div class="plan-nav-item" onclick="">
+        <span>✈️</span> Travel &amp; relocation
+        <div class="check-sm"></div>
+      </div>
+      <div class="plan-nav-item" onclick="">
+        <span>💬</span> Communication
+        <div class="check-sm"></div>
+      </div>
+      <div style="margin-top:auto;padding:16px 12px;border-top:1px solid var(--cn-outline-light);">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <div style="flex:1;"><div class="progress-bar-wrap" style="margin:0;"><div class="progress-bar-fill" style="width:25%;"></div></div></div>
+          <div class="text-muted" style="font-size:12px;">2 of 8</div>
+        </div>
+        <button class="btn btn-primary btn-sm" style="width:100%;justify-content:center;" onclick="go('s5-odr-topics')">Send to Jordan →</button>
+      </div>
+    </div>
+    <div class="plan-main">
+      <div class="eyebrow">Step 3 of 8 — Holidays</div>
+      <h2>Holiday schedule</h2>
+      <p style="margin-bottom:24px;">Decide how you and Jordan will split major holidays. You can alternate each year, split days, or assign them consistently to one parent.</p>
+
+      <div class="card" style="margin-bottom:16px;">
+        <h3 style="margin-bottom:16px;">Major holidays</h3>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;">
+            <div style="font-weight:700;font-size:14px;">Thanksgiving</div>
+            <select style="width:auto;">
+              <option>Alternates (even years: Alex)</option>
+              <option>Always Alex</option>
+              <option>Always Jordan</option>
+              <option>Split the day</option>
+            </select>
+            <div class="badge badge-green">Set</div>
+          </div>
+          <hr style="margin:4px 0;">
+          <div style="display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;">
+            <div style="font-weight:700;font-size:14px;">Winter break (Dec 26 – Jan 1)</div>
+            <select style="width:auto;">
+              <option>Alternates (even years: Jordan)</option>
+              <option>Always Alex</option>
+              <option>Always Jordan</option>
+              <option>Split the week</option>
+            </select>
+            <div class="badge badge-green">Set</div>
+          </div>
+          <hr style="margin:4px 0;">
+          <div style="display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;">
+            <div style="font-weight:700;font-size:14px;">Spring break</div>
+            <select style="width:auto;">
+              <option>Not yet set</option>
+              <option selected>Alternates (even years: Alex)</option>
+              <option>Always Alex</option>
+              <option>Always Jordan</option>
+            </select>
+            <div class="badge badge-amber">Pending</div>
+          </div>
+          <hr style="margin:4px 0;">
+          <div style="display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;">
+            <div style="font-weight:700;font-size:14px;">Mother's Day / Father's Day</div>
+            <select style="width:auto;">
+              <option selected>Each parent on their own day</option>
+              <option>Alternates</option>
+            </select>
+            <div class="badge badge-green">Set</div>
+          </div>
+          <hr style="margin:4px 0;">
+          <div style="display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;">
+            <div style="font-weight:700;font-size:14px;">Children's birthdays</div>
+            <select style="width:auto;">
+              <option selected>Alternate each year</option>
+              <option>Both parents together</option>
+              <option>Split the day</option>
+            </select>
+            <div class="badge badge-green">Set</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <p><strong>These are your starting positions.</strong> Jordan will review and may propose changes during negotiation. Anything you both agree on now moves faster through the ODR process.</p>
+      </div>
+
+      <div style="display:flex;gap:12px;margin-top:24px;">
+        <button class="btn btn-primary" onclick="">Save and continue →</button>
+        <button class="btn btn-secondary btn-sm" onclick="go('s5-odr-topics')">Skip ahead to negotiation</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     SCREEN: STAGE 5a — ODR TOPIC OVERVIEW
+     ================================================================ -->
+<div class="screen" id="s5-odr-topics">
+  <nav class="top-nav">
+    <div class="logo">Custody<span>Navigator</span></div>
+    <div class="nav-right"><span style="color:rgba(255,255,255,0.6);">Alex Rivera</span><span style="color:rgba(255,255,255,0.4);margin:0 4px;">·</span><span style="color:var(--cn-green-light);font-size:13px;">ODR case #DN-2024-0883</span></div>
+  </nav>
+  <div class="stage-bar">
+    <div class="stage-item done"><div class="stage-num">✓</div>Readiness quiz</div>
+    <div class="stage-item done"><div class="stage-num">✓</div>Education</div>
+    <div class="stage-item done"><div class="stage-num">✓</div>Intake</div>
+    <div class="stage-item done"><div class="stage-num">✓</div>Parenting plan</div>
+    <div class="stage-item active"><div class="stage-num">5</div>Negotiate</div>
+    <div class="stage-item"><div class="stage-num">6</div>Sign &amp; file</div>
+  </div>
+  <div class="odr-layout" style="flex:1;">
+    <div class="odr-sidebar">
+      <div class="odr-sidebar-section">
+        <h4>Parties</h4>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <div class="parent-dot pa" style="width:28px;height:28px;font-size:12px;">A</div>
+          <div>
+            <div style="font-weight:700;font-size:13px;">Alex Rivera</div>
+            <div style="font-size:11px;color:var(--cn-text-muted);">You · Petitioner</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="parent-dot pb" style="width:28px;height:28px;font-size:12px;">B</div>
+          <div>
+            <div style="font-weight:700;font-size:13px;">Jordan Rivera</div>
+            <div style="font-size:11px;color:var(--cn-text-muted);">Respondent</div>
+          </div>
+        </div>
+      </div>
+      <div class="odr-sidebar-section">
+        <h4>Deadline</h4>
+        <div style="font-size:13px;font-weight:700;">Oct 14, 2024</div>
+        <div style="font-size:12px;color:var(--cn-text-muted);">44 days remaining</div>
+      </div>
+      <div class="odr-sidebar-section" style="flex:1;">
+        <h4>Navigation</h4>
+        <div class="odr-sidebar-item active">📊 Topic overview</div>
+        <div class="odr-sidebar-item" onclick="go('s5-odr-propose')">💬 Activity / chat</div>
+        <div class="odr-sidebar-item">📎 Files</div>
+        <div class="odr-sidebar-item">📝 Summary</div>
+        <div class="odr-sidebar-item">📅 Timeline</div>
+      </div>
+    </div>
+    <div class="odr-main">
+      <div class="eyebrow">Stage 5 of 6 — Negotiate</div>
+      <h2>Parenting plan negotiation</h2>
+      <p style="margin-bottom:24px;">You and Jordan are working through your parenting plan topic by topic. Click any topic to see the current status and take action.</p>
+
+      <div class="topic-progress">
+        <div class="topic-chip agreed">
+          <div class="topic-icon">⚖️</div>
+          <div>Legal custody</div>
+          <div style="font-size:10px;">Agreed</div>
+        </div>
+        <div class="topic-chip agreed">
+          <div class="topic-icon">📅</div>
+          <div>Timeshare</div>
+          <div style="font-size:10px;">Agreed</div>
+        </div>
+        <div class="topic-chip pending" onclick="go('s5-odr-propose')">
+          <div class="topic-icon">🏖️</div>
+          <div>Vacations</div>
+          <div style="font-size:10px;">Your turn</div>
+        </div>
+        <div class="topic-chip pending">
+          <div class="topic-icon">🚗</div>
+          <div>Transport</div>
+          <div style="font-size:10px;">Jordan's turn</div>
+        </div>
+        <div class="topic-chip open">
+          <div class="topic-icon">🏖️</div>
+          <div>Holidays</div>
+          <div style="font-size:10px;">Not started</div>
+        </div>
+        <div class="topic-chip open">
+          <div class="topic-icon">🎓</div>
+          <div>School breaks</div>
+          <div style="font-size:10px;">Not started</div>
+        </div>
+        <div class="topic-chip open">
+          <div class="topic-icon">✈️</div>
+          <div>Travel</div>
+          <div style="font-size:10px;">Not started</div>
+        </div>
+        <div class="topic-chip open">
+          <div class="topic-icon">📌</div>
+          <div>Special</div>
+          <div style="font-size:10px;">Not started</div>
+        </div>
+      </div>
+
+      <div class="callout callout-amber" style="margin-bottom:24px;">
+        <p><strong>Action needed:</strong> Jordan is waiting on your vacation proposal. Complete it to keep things moving.</p>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+          <h3>Topic status</h3>
+          <div class="badge badge-green">2 of 8 agreed</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--cn-green-pale);border-radius:8px;">
+            <span>⚖️</span>
+            <div style="flex:1;font-size:14px;font-weight:700;">Legal custody</div>
+            <div class="badge badge-green">Agreed</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--cn-green-pale);border-radius:8px;">
+            <span>📅</span>
+            <div style="flex:1;font-size:14px;font-weight:700;">Timeshare (2-2-3 rotation)</div>
+            <div class="badge badge-green">Agreed</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:#FFF4E8;border-radius:8px;cursor:pointer;" onclick="go('s5-odr-propose')">
+            <span>🏖️</span>
+            <div style="flex:1;font-size:14px;font-weight:700;">Vacations</div>
+            <div class="badge badge-orange">Your turn to propose</div>
+            <button class="btn btn-primary btn-sm">Propose →</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:#EEF1FA;border-radius:8px;">
+            <span>🚗</span>
+            <div style="flex:1;font-size:14px;font-weight:700;">Transportation</div>
+            <div class="badge badge-blue">Waiting for Jordan</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--cn-surface-warm);border-radius:8px;">
+            <span>🏖️</span>
+            <div style="flex:1;font-size:14px;font-weight:700;">Holidays</div>
+            <div class="badge badge-gray">Not started</div>
+            <button class="btn btn-secondary btn-sm">Start</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     SCREEN: STAGE 5b — ODR PROPOSE (Plaintiff view)
+     ================================================================ -->
+<div class="screen" id="s5-odr-propose">
+  <nav class="top-nav">
+    <div class="logo">Custody<span>Navigator</span></div>
+    <div class="nav-right"><span style="color:rgba(255,255,255,0.6);">Alex Rivera</span><span style="color:rgba(255,255,255,0.4);margin:0 4px;">·</span><span style="color:var(--cn-green-light);font-size:13px;">ODR case #DN-2024-0883</span></div>
+  </nav>
+  <div class="stage-bar">
+    <div class="stage-item done"><div class="stage-num">✓</div>Readiness quiz</div>
+    <div class="stage-item done"><div class="stage-num">✓</div>Education</div>
+    <div class="stage-item done"><div class="stage-num">✓</div>Intake</div>
+    <div class="stage-item done"><div class="stage-num">✓</div>Parenting plan</div>
+    <div class="stage-item active"><div class="stage-num">5</div>Negotiate</div>
+    <div class="stage-item"><div class="stage-num">6</div>Sign &amp; file</div>
+  </div>
+  <div class="odr-layout" style="flex:1;">
+    <div class="odr-sidebar">
+      <div class="odr-sidebar-section">
+        <h4>Parties</h4>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <div class="parent-dot pa" style="width:28px;height:28px;font-size:12px;">A</div>
+          <div><div style="font-weight:700;font-size:13px;">Alex Rivera</div><div style="font-size:11px;color:var(--cn-text-muted);">You · Petitioner</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="parent-dot pb" style="width:28px;height:28px;font-size:12px;">B</div>
+          <div><div style="font-weight:700;font-size:13px;">Jordan Rivera</div><div style="font-size:11px;color:var(--cn-text-muted);">Respondent</div></div>
+        </div>
+      </div>
+      <div class="odr-sidebar-section" style="flex:1;">
+        <h4>Topics</h4>
+        <div class="odr-sidebar-item" onclick="go('s5-odr-topics')">⚖️ Legal custody <span style="margin-left:auto;" class="badge badge-green" style="font-size:10px;">✓</span></div>
+        <div class="odr-sidebar-item" onclick="go('s5-odr-topics')">📅 Timeshare <span style="margin-left:auto;" class="badge badge-green" style="font-size:10px;">✓</span></div>
+        <div class="odr-sidebar-item active">🏖️ Vacations</div>
+        <div class="odr-sidebar-item">🚗 Transportation</div>
+        <div class="odr-sidebar-item">🏖️ Holidays</div>
+        <div class="odr-sidebar-item">🎓 School breaks</div>
+        <div class="odr-sidebar-item">✈️ Travel</div>
+        <div class="odr-sidebar-item">📌 Special provisions</div>
+      </div>
+    </div>
+    <div class="odr-main">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;">
+        <button class="btn btn-ghost btn-sm" style="padding:4px 8px;" onclick="go('s5-odr-topics')">← All topics</button>
+        <div class="badge badge-orange">Your turn to propose</div>
+      </div>
+      <div class="eyebrow">Topic 3 of 8 — Vacations</div>
+      <h2>Your vacation proposal</h2>
+      <p style="margin-bottom:24px;">Propose how you'd like vacation time to work. Jordan will be able to accept, counter-propose, or ask for clarification.</p>
+
+      <div class="card" style="margin-bottom:16px;">
+        <h3 style="margin-bottom:16px;">Choose a starting position</h3>
+        <div class="option-card selected">
+          <div class="radio-dot"></div>
+          <div>
+            <div class="option-label">Each parent gets 2 weeks of uninterrupted vacation per year</div>
+            <div class="option-desc">Requires 30 days advance written notice. Vacation overrides the regular schedule.</div>
+          </div>
+        </div>
+        <div class="option-card">
+          <div class="radio-dot"></div>
+          <div>
+            <div class="option-label">Each parent gets 3 weeks of vacation per year</div>
+            <div class="option-desc">Requires 45 days advance written notice. Can be split into multiple trips.</div>
+          </div>
+        </div>
+        <div class="option-card">
+          <div class="radio-dot"></div>
+          <div>
+            <div class="option-label">Custom proposal</div>
+            <div class="option-desc">Describe your vacation arrangement in your own words.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <h3 style="margin-bottom:12px;">Add details to your proposal</h3>
+        <div class="form-group">
+          <label>Notice required</label>
+          <select>
+            <option>30 days written notice</option>
+            <option>45 days written notice</option>
+            <option>60 days written notice</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Holiday conflict rule</label>
+          <select>
+            <option selected>Holiday schedule takes priority over vacation</option>
+            <option>Vacation overrides holiday schedule with agreement</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label>Additional notes (optional)</label>
+          <textarea rows="3" placeholder="Any specific conditions, restrictions, or clarifications…"></textarea>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;">
+        <button class="btn btn-primary" onclick="go('s5-odr-respond')">Send proposal to Jordan →</button>
+        <button class="btn btn-ghost btn-sm" onclick="go('s5-odr-topics')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     SCREEN: STAGE 5c — ODR RESPOND (Respondent view)
+     ================================================================ -->
+<div class="screen" id="s5-odr-respond">
+  <nav class="top-nav">
+    <div class="logo">Custody<span>Navigator</span></div>
+    <div class="nav-right"><span style="color:rgba(255,255,255,0.6);">Jordan Rivera</span><span style="color:rgba(255,255,255,0.4);margin:0 4px;">·</span><span style="color:var(--cn-green-light);font-size:13px;">ODR case #DN-2024-0883</span></div>
+  </nav>
+  <div class="stage-bar">
+    <div class="stage-item done"><div class="stage-num">✓</div>Readiness quiz</div>
+    <div class="stage-item done"><div class="stage-num">✓</div>Education</div>
+    <div class="stage-item done"><div class="stage-num">✓</div>Intake</div>
+    <div class="stage-item done"><div class="stage-num">✓</div>Parenting plan</div>
+    <div class="stage-item active"><div class="stage-num">5</div>Negotiate</div>
+    <div class="stage-item"><div class="stage-num">6</div>Sign &amp; file</div>
+  </div>
+  <div class="odr-layout" style="flex:1;">
+    <div class="odr-sidebar">
+      <div class="odr-sidebar-section">
+        <h4>Parties</h4>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <div class="parent-dot pa" style="width:28px;height:28px;font-size:12px;">A</div>
+          <div><div style="font-weight:700;font-size:13px;">Alex Rivera</div><div style="font-size:11px;color:var(--cn-text-muted);">Petitioner</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="parent-dot pb" style="width:28px;height:28px;font-size:12px;">B</div>
+          <div><div style="font-weight:700;font-size:13px;">Jordan Rivera</div><div style="font-size:11px;color:var(--cn-text-muted);">You · Respondent</div></div>
+        </div>
+      </div>
+      <div class="odr-sidebar-section" style="flex:1;">
+        <h4>Topics</h4>
+        <div class="odr-sidebar-item">⚖️ Legal custody</div>
+        <div class="odr-sidebar-item">📅 Timeshare</div>
+        <div class="odr-sidebar-item active">🏖️ Vacations</div>
+        <div class="odr-sidebar-item">🚗 Transportation</div>
+        <div class="odr-sidebar-item">🏖️ Holidays</div>
+      </div>
+    </div>
+    <div class="odr-main">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;">
+        <div class="badge badge-blue">Jordan — your response needed</div>
+      </div>
+      <div class="eyebrow">Topic 3 of 8 — Vacations</div>
+      <h2>Alex has made a proposal</h2>
+      <p style="margin-bottom:24px;">Review Alex's proposal below, then accept it or counter-propose.</p>
+
+      <div class="proposal-card" style="margin-bottom:24px;">
+        <div class="proposal-header pa">
+          <div class="parent-dot pa">A</div>
+          <div>
+            <div style="font-weight:700;font-size:14px;">Alex Rivera's proposal</div>
+            <div style="font-size:12px;color:var(--cn-text-muted);">Submitted Sep 1, 2024</div>
+          </div>
+          <div style="margin-left:auto;"><div class="badge badge-orange">Pending your response</div></div>
+        </div>
+        <div class="proposal-body">
+          <div style="font-weight:700;font-size:15px;margin-bottom:8px;">Each parent gets 2 weeks of uninterrupted vacation per year</div>
+          <div style="font-size:14px;color:var(--cn-text-sec);line-height:1.6;">
+            <strong>Notice required:</strong> 30 days written notice<br>
+            <strong>Holiday conflict:</strong> Holiday schedule takes priority over vacation<br>
+            <strong>Notes:</strong> No additional notes provided.
+          </div>
+        </div>
+      </div>
+
+      <h3 style="margin-bottom:16px;">Your response</h3>
+      <div class="option-card selected">
+        <div class="radio-dot"></div>
+        <div>
+          <div class="option-label">Accept Alex's proposal</div>
+          <div class="option-desc">This topic will be marked as agreed and included in the parenting plan.</div>
+        </div>
+      </div>
+      <div class="option-card" onclick="selectOpt(this,'.resp-opt')">
+        <div class="radio-dot"></div>
+        <div>
+          <div class="option-label">Counter-propose</div>
+          <div class="option-desc">Suggest a different arrangement and explain why.</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;margin-top:24px;">
+        <button class="btn btn-accept" onclick="go('s5-odr-dispute')">Accept Alex's proposal ✓</button>
+        <button class="btn btn-secondary" onclick="go('s5-odr-dispute')">Counter-propose</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     SCREEN: STAGE 5d — ODR DISPUTE DETAIL (side by side)
+     ================================================================ -->
+<div class="screen" id="s5-odr-dispute">
+  <nav class="top-nav">
+    <div class="logo">Custody<span>Navigator</span></div>
+    <div class="nav-right"><span style="color:rgba(255,255,255,0.6);">Alex Rivera</span><span style="color:rgba(255,255,255,0.4);margin:0 4px;">·</span><span style="color:var(--cn-green-light);font-size:13px;">ODR case #DN-2024-0883</span></div>
+  </nav>
+  <div class="stage-bar">
+    <div class="stage-item done"><div class="stage-num">✓</div>Readiness quiz</div>
+    <div class="stage-item done"><div class="stage-num">✓</div>Education</div>
+    <div class="stage-item done"><div class="stage-num">✓</div>Intake</div>
+    <div class="stage-item done"><div class="stage-num">✓</div>Parenting plan</div>
+    <div class="stage-item active"><div class="stage-num">5</div>Negotiate</div>
+    <div class="stage-item"><div class="stage-num">6</div>Sign &amp; file</div>
+  </div>
+  <div class="odr-layout" style="flex:1;">
+    <div class="odr-sidebar">
+      <div class="odr-sidebar-section">
+        <h4>Parties</h4>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <div class="parent-dot pa" style="width:28px;height:28px;font-size:12px;">A</div>
+          <div><div style="font-weight:700;font-size:13px;">Alex Rivera</div><div style="font-size:11px;color:var(--cn-text-muted);">You · Petitioner</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="parent-dot pb" style="width:28px;height:28px;font-size:12px;">B</div>
+          <div><div style="font-weight:700;font-size:13px;">Jordan Rivera</div><div style="font-size:11px;color:var(--cn-text-muted);">Respondent</div></div>
+        </div>
+      </div>
+      <div class="odr-sidebar-section" style="flex:1;">
+        <h4>Topics</h4>
+        <div class="odr-sidebar-item">⚖️ Legal custody</div>
+        <div class="odr-sidebar-item">📅 Timeshare</div>
+        <div class="odr-sidebar-item active">🏖️ Vacations — Dispute</div>
+        <div class="odr-sidebar-item">🚗 Transportation</div>
+        <div class="odr-sidebar-item">🏖️ Holidays</div>
+      </div>
+    </div>
+    <div class="odr-main">
+      <div class="badge badge-amber" style="margin-bottom:8px;">Dispute in progress</div>
+      <div class="eyebrow">Topic 3 of 8 — Vacations</div>
+      <h2>Dispute details</h2>
+      <p style="margin-bottom:16px;">Jordan counter-proposed. Review both positions side by side. You can accept Jordan's counter, revise your proposal, or request mediator review.</p>
+
+      <div class="dispute-row">
+        <div class="dispute-col pa-col">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+            <div class="parent-dot pa" style="width:28px;height:28px;font-size:12px;">A</div>
+            <div style="font-weight:700;font-size:14px;">Alex's position</div>
+          </div>
+          <div style="font-size:14px;line-height:1.7;color:var(--cn-text-sec);">
+            <strong>Arrangement:</strong> 2 weeks uninterrupted per year<br>
+            <strong>Notice:</strong> 30 days written notice<br>
+            <strong>Holiday conflict:</strong> Holidays take priority
+          </div>
+        </div>
+        <div class="dispute-col pb-col">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+            <div class="parent-dot pb" style="width:28px;height:28px;font-size:12px;">B</div>
+            <div style="font-weight:700;font-size:14px;">Jordan's counter</div>
+          </div>
+          <div style="font-size:14px;line-height:1.7;color:var(--cn-text-sec);">
+            <strong>Arrangement:</strong> 3 weeks per year (can be split)<br>
+            <strong>Notice:</strong> 45 days written notice<br>
+            <strong>Holiday conflict:</strong> Vacation overrides with mutual agreement
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-amber" style="margin-top:20px;margin-bottom:20px;">
+        <p><strong>Key difference:</strong> Jordan wants 3 weeks (vs. your 2) and longer advance notice. The holiday conflict rule also differs. Consider whether a middle ground works — 2.5 weeks, 30–45 days notice.</p>
+      </div>
+
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <button class="btn btn-accept" onclick="go('s6-sign')">Accept Jordan's counter ✓</button>
+        <button class="btn btn-primary" onclick="">Revise my proposal</button>
+        <button class="btn btn-secondary" onclick="">Request mediator review</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     SCREEN: STAGE 6 — E-SIGNATURE & FILE
+     ================================================================ -->
+<div class="screen" id="s6-sign">
+  <nav class="top-nav">
+    <div class="logo">Custody<span>Navigator</span></div>
+    <div class="nav-right"><span style="color:rgba(255,255,255,0.6);">Alex Rivera</span></div>
+  </nav>
+  <div class="stage-bar">
+    <div class="stage-item done"><div class="stage-num">✓</div>Readiness quiz</div>
+    <div class="stage-item done"><div class="stage-num">✓</div>Education</div>
+    <div class="stage-item done"><div class="stage-num">✓</div>Intake</div>
+    <div class="stage-item done"><div class="stage-num">✓</div>Parenting plan</div>
+    <div class="stage-item done"><div class="stage-num">✓</div>Negotiate</div>
+    <div class="stage-item active"><div class="stage-num">6</div>Sign &amp; file</div>
+  </div>
+  <div class="content-wide">
+    <div style="display:flex;gap:32px;align-items:flex-start;">
+      <div style="flex:1;">
+        <div class="eyebrow">Stage 6 of 6 — Sign &amp; file</div>
+        <h2>Your parenting agreement is ready</h2>
+        <p style="margin-bottom:24px;">All 8 topics have been agreed. Review the document below, then both parents need to sign before it can be filed with the court.</p>
+
+        <div class="callout" style="margin-bottom:24px;">
+          <p><strong>What happens after you sign:</strong> Jordan will be notified to sign. Once both signatures are collected, you can download the signed PDF and optionally file it electronically with Minnesota District Court via eFileMinnesota.</p>
+        </div>
+
+        <div class="agreement-preview" style="margin-bottom:24px;">
+          <h3>STIPULATION AND ORDER<br>RE: PARENTING PLAN</h3>
+          <div style="text-align:center;font-size:13px;color:var(--cn-text-muted);margin-bottom:20px;">District Court, State of Minnesota, County of Hennepin<br>Case No. [To be assigned upon filing]</div>
+
+          <div class="section-title">Parties</div>
+          <p>Petitioner: Alex Rivera &nbsp;|&nbsp; Respondent: Jordan Rivera<br>
+          Children: Maya Rivera (age 8), Theo Rivera (age 5)</p>
+
+          <div class="section-title">1. Legal Custody</div>
+          <p>The parties shall share <strong>joint legal custody</strong> of the minor children. Both parents shall have equal rights and responsibilities for the health, education, and welfare of the children. Major decisions require agreement by both parents.</p>
+
+          <div class="section-title">2. Physical Custody and Parenting Schedule</div>
+          <p>The parties shall share <strong>joint physical custody</strong> pursuant to a 2-2-3 rotating schedule as set forth in Exhibit A. Each parent shall have the children approximately 50% of the time.</p>
+
+          <div class="section-title">3. Vacation Time</div>
+          <p>Each parent shall be entitled to <strong>three (3) weeks</strong> of uninterrupted vacation time per calendar year. Vacation time shall be designated by written notice no less than <strong>45 days</strong> in advance. Vacation time may be taken in non-consecutive periods. In the event of a conflict with the holiday schedule, the parties shall reach mutual agreement regarding which schedule governs.</p>
+
+          <div class="section-title">4. Holiday Schedule</div>
+          <p>The parties shall alternate major holidays on an annual basis as set forth in Exhibit B. Thanksgiving shall be with Parent A in even-numbered years and Parent B in odd-numbered years…</p>
+
+          <div style="text-align:center;margin-top:24px;color:var(--cn-text-muted);font-size:12px;">[Document continues — all 8 agreed topics included]</div>
+        </div>
+      </div>
+
+      <div style="width:280px;flex-shrink:0;">
+        <div class="card" style="margin-bottom:16px;">
+          <h3 style="margin-bottom:16px;">Signatures</h3>
+
+          <div style="margin-bottom:16px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+              <div class="parent-dot pa" style="width:24px;height:24px;font-size:11px;">A</div>
+              <div style="font-weight:700;font-size:14px;">Alex Rivera</div>
+            </div>
+            <div class="sig-box signed" onclick="">
+              <div class="sig-line">Alex Rivera</div>
+              <div style="font-size:11px;color:var(--cn-green-mid);margin-top:4px;">Signed Sep 15, 2024</div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+              <div class="parent-dot pb" style="width:24px;height:24px;font-size:11px;">B</div>
+              <div style="font-weight:700;font-size:14px;">Jordan Rivera</div>
+            </div>
+            <div class="sig-box" onclick="">
+              <div style="font-size:13px;color:var(--cn-text-muted);">Waiting for Jordan's signature</div>
+              <div style="font-size:11px;color:var(--cn-text-muted);margin-top:4px;">Invitation sent Sep 15</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:16px;">
+          <h3 style="margin-bottom:12px;">File with court</h3>
+          <p style="font-size:13px;margin-bottom:12px;">Once both parties sign, you can file electronically with Minnesota District Court via eFileMinnesota.</p>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;">
+              <span style="color:var(--cn-green-mid);">✓</span> Both signatures collected
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--cn-text-muted);">
+              ○ Filing fee ($370) — pay at filing
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--cn-text-muted);">
+              ○ Judge review (5–10 business days)
+            </div>
+          </div>
+          <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:16px;" onclick="go('s6-filed')">File with Minnesota Court →</button>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-bottom:12px;">Download</h3>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <button class="btn btn-secondary btn-sm" style="width:100%;justify-content:center;">Download signed PDF</button>
+            <button class="btn btn-secondary btn-sm" style="width:100%;justify-content:center;">Download word document</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     SCREEN: STAGE 6 — FILED CONFIRMATION
+     ================================================================ -->
+<div class="screen" id="s6-filed">
+  <nav class="top-nav">
+    <div class="logo">Custody<span>Navigator</span></div>
+    <div class="nav-right"><span style="color:rgba(255,255,255,0.6);">Alex Rivera</span></div>
+  </nav>
+  <div class="stage-bar">
+    <div class="stage-item done"><div class="stage-num">✓</div>Readiness quiz</div>
+    <div class="stage-item done"><div class="stage-num">✓</div>Education</div>
+    <div class="stage-item done"><div class="stage-num">✓</div>Intake</div>
+    <div class="stage-item done"><div class="stage-num">✓</div>Parenting plan</div>
+    <div class="stage-item done"><div class="stage-num">✓</div>Negotiate</div>
+    <div class="stage-item done"><div class="stage-num">✓</div>Sign &amp; file</div>
+  </div>
+  <div class="content">
+    <div class="success-hero">
+      <div class="success-icon">🎉</div>
+      <h2>Your parenting plan has been filed</h2>
+      <p>Your parenting plan has been submitted to Minnesota District Court. You'll receive a confirmation email with your filing number and next steps.</p>
+    </div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <h3>What happens next</h3>
+      <div style="margin-top:16px;display:flex;flex-direction:column;gap:16px;">
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:32px;height:32px;border-radius:9999px;background:var(--cn-green-pale);color:var(--cn-green);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">1</div>
+          <div>
+            <div style="font-weight:700;">Court review</div>
+            <div class="text-muted">A family law judge will review your agreement. Most uncontested plans are approved in 5–10 business days.</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:32px;height:32px;border-radius:9999px;background:var(--cn-green-pale);color:var(--cn-green);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">2</div>
+          <div>
+            <div style="font-weight:700;">Notice of approval</div>
+            <div class="text-muted">You and Jordan will each receive a certified copy of the signed court order.</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:32px;height:32px;border-radius:9999px;background:var(--cn-green-pale);color:var(--cn-green);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">3</div>
+          <div>
+            <div style="font-weight:700;">Your parenting plan is active</div>
+            <div class="text-muted">Once approved, your schedule is the law. Custody Navigator will automatically set up your calendar based on your 2-2-3 rotation.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:24px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div style="font-weight:700;">Filing reference</div>
+          <div class="text-muted">MN-2024-FAM-009912</div>
+        </div>
+        <div class="badge badge-green">Filed Sep 15, 2024</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="">Go to my calendar →</button>
+      <button class="btn btn-secondary" onclick="">Download final parenting plan</button>
+      <button class="btn btn-ghost btn-sm" onclick="go('s1-welcome')">← Return to start (prototype reset)</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     PROTOTYPE NAVIGATION (bottom floating bar)
+     ================================================================ -->
+<div style="position:fixed;bottom:0;left:0;right:0;background:var(--cn-forest);padding:10px 20px;display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.5);z-index:1000;flex-wrap:wrap;">
+  <span style="color:rgba(255,255,255,0.3);margin-right:4px;">Prototype:</span>
+  <button onclick="go('s1-welcome')" style="background:rgba(255,255,255,0.1);border:none;color:rgba(255,255,255,0.7);padding:4px 10px;border-radius:9999px;cursor:pointer;font-size:11px;">1a Welcome</button>
+  <button onclick="go('s1-quiz-location')" style="background:rgba(255,255,255,0.1);border:none;color:rgba(255,255,255,0.7);padding:4px 10px;border-radius:9999px;cursor:pointer;font-size:11px;">1b State</button>
+  <button onclick="go('s1-quiz-complexity')" style="background:rgba(255,255,255,0.1);border:none;color:rgba(255,255,255,0.7);padding:4px 10px;border-radius:9999px;cursor:pointer;font-size:11px;">1c Screener</button>
+  <button onclick="go('s1-attorney-referral')" style="background:rgba(255,255,255,0.1);border:none;color:rgba(255,255,255,0.7);padding:4px 10px;border-radius:9999px;cursor:pointer;font-size:11px;">1c→ Attorney</button>
+  <button onclick="go('s1-quiz-readiness')" style="background:rgba(255,255,255,0.1);border:none;color:rgba(255,255,255,0.7);padding:4px 10px;border-radius:9999px;cursor:pointer;font-size:11px;">1d Family</button>
+  <button onclick="go('s1-quiz-result')" style="background:rgba(255,255,255,0.1);border:none;color:rgba(255,255,255,0.7);padding:4px 10px;border-radius:9999px;cursor:pointer;font-size:11px;">1e Result</button>
+  <button onclick="go('s2-education')" style="background:rgba(255,255,255,0.1);border:none;color:rgba(255,255,255,0.7);padding:4px 10px;border-radius:9999px;cursor:pointer;font-size:11px;">2 Education</button>
+  <button onclick="go('s3-intake')" style="background:rgba(255,255,255,0.1);border:none;color:rgba(255,255,255,0.7);padding:4px 10px;border-radius:9999px;cursor:pointer;font-size:11px;">3 Intake</button>
+  <button onclick="go('s4-plan')" style="background:rgba(255,255,255,0.1);border:none;color:rgba(255,255,255,0.7);padding:4px 10px;border-radius:9999px;cursor:pointer;font-size:11px;">4 Plan builder</button>
+  <button onclick="go('s5-odr-topics')" style="background:rgba(255,255,255,0.1);border:none;color:rgba(255,255,255,0.7);padding:4px 10px;border-radius:9999px;cursor:pointer;font-size:11px;">5a ODR topics</button>
+  <button onclick="go('s5-odr-propose')" style="background:rgba(255,255,255,0.1);border:none;color:rgba(255,255,255,0.7);padding:4px 10px;border-radius:9999px;cursor:pointer;font-size:11px;">5b Propose</button>
+  <button onclick="go('s5-odr-respond')" style="background:rgba(255,255,255,0.1);border:none;color:rgba(255,255,255,0.7);padding:4px 10px;border-radius:9999px;cursor:pointer;font-size:11px;">5c Respond</button>
+  <button onclick="go('s5-odr-dispute')" style="background:rgba(255,255,255,0.1);border:none;color:rgba(255,255,255,0.7);padding:4px 10px;border-radius:9999px;cursor:pointer;font-size:11px;">5d Dispute</button>
+  <button onclick="go('s6-sign')" style="background:rgba(255,255,255,0.1);border:none;color:rgba(255,255,255,0.7);padding:4px 10px;border-radius:9999px;cursor:pointer;font-size:11px;">6 E-sign</button>
+  <button onclick="go('s6-filed')" style="background:rgba(255,255,255,0.1);border:none;color:rgba(255,255,255,0.7);padding:4px 10px;border-radius:9999px;cursor:pointer;font-size:11px;">6→ Filed</button>
+</div>
+
+<script>
+  function go(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const target = document.getElementById(id);
+    if (target) {
+      target.classList.add('active');
+      window.scrollTo(0, 0);
+    }
+  }
+
+  function selectOpt(el, groupSelector) {
+    const parent = el.closest('.card') || el.parentElement;
+    parent.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+</script>
+</body>
+</html>
