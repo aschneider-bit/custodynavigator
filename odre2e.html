@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Custody Navigator — ODR Flow Prototype</title>
+<style>
+  :root {
+    --cn-forest: #002B14;
+    --cn-green: #065444;
+    --cn-green-mid: #0A9373;
+    --cn-green-light: #6DCAB7;
+    --cn-green-pale: #DEF1E7;
+    --cn-bg: #F9F4ED;
+    --cn-surface: #FFFFFF;
+    --cn-surface-warm: #F8F2EB;
+    --cn-outline: #B2A799;
+    --cn-outline-light: #EDDFCC;
+    --cn-text-primary: #002B14;
+    --cn-text-secondary: #3B342A;
+    --cn-text-muted: #777066;
+    --cn-parent-a: #FD8E3F;
+    --cn-parent-a-light: #FCC49C;
+    --cn-parent-b: #8EA5DB;
+    --cn-parent-b-light: #D3DCF1;
+    --cn-amber: #B2622B;
+    --cn-amber-light: #FEF0E4;
+    --cn-red: #AD4141;
+    --cn-slate: #63749B;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'HK Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: #E8E0D8;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px;
+  }
+
+  /* ── Prototype chrome ── */
+  .proto-nav {
+    width: 100%;
+    max-width: 1100px;
+    background: var(--cn-forest);
+    border-radius: 12px 12px 0 0;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .proto-nav-label {
+    color: rgba(255,255,255,0.5);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .proto-nav-screens {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    flex: 1;
+  }
+
+  .proto-btn {
+    background: rgba(255,255,255,0.12);
+    border: none;
+    border-radius: 9999px;
+    color: rgba(255,255,255,0.7);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    font-family: inherit;
+  }
+
+  .proto-btn:hover { background: rgba(255,255,255,0.22); color: #fff; }
+  .proto-btn.active { background: var(--cn-green-mid); color: #fff; }
+
+  .pov-pills {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+  }
+
+  .pov-pill {
+    border: none;
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 5px 12px;
+    cursor: pointer;
+    font-family: inherit;
+    opacity: 0.5;
+    transition: opacity 0.15s;
+  }
+  .pov-pill.a { background: var(--cn-parent-a); color: #fff; }
+  .pov-pill.b { background: var(--cn-parent-b); color: #fff; }
+  .pov-pill.active { opacity: 1; }
+
+  /* ── App shell ── */
+  .app-shell {
+    width: 100%;
+    max-width: 1100px;
+    background: var(--cn-bg);
+    border-radius: 0 0 12px 12px;
+    display: flex;
+    min-height: 680px;
+    overflow: hidden;
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 220px;
+    min-width: 220px;
+    background: var(--cn-forest);
+    display: flex;
+    flex-direction: column;
+    padding: 0 0 24px 0;
+  }
+
+  .sidebar-logo {
+    padding: 28px 24px 24px;
+    font-size: 17px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: 0.06em;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .sidebar-logo span { color: var(--cn-green-light); }
+
+  .sidebar-nav {
+    padding: 16px 0;
+    flex: 1;
+  }
+
+  .sidebar-nav a {
+    display: block;
+    padding: 10px 24px;
+    color: rgba(255,255,255,0.6);
+    font-size: 13px;
+    font-weight: 400;
+    text-decoration: none;
+    cursor: default;
+    transition: color 0.12s;
+  }
+
+  .sidebar-nav a:hover { color: rgba(255,255,255,0.9); }
+
+  .sidebar-nav a.active {
+    color: #fff;
+    font-weight: 700;
+    background: rgba(255,255,255,0.08);
+    border-left: 3px solid var(--cn-green-light);
+    padding-left: 21px;
+  }
+
+  .sidebar-badge {
+    display: inline-block;
+    background: var(--cn-green-mid);
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 9999px;
+    margin-left: 6px;
+    vertical-align: middle;
+    letter-spacing: 0.04em;
+  }
+
+  .sidebar-footer {
+    padding: 0 24px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.3);
+  }
+
+  /* ── Parent badge ── */
+  .parent-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px 4px 8px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .parent-tag .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .parent-tag.a { background: #FEF0E4; color: var(--cn-parent-a); }
+  .parent-tag.a .dot { background: var(--cn-parent-a); }
+  .parent-tag.b { background: var(--cn-parent-b-light); color: #3D5A8A; }
+  .parent-tag.b .dot { background: var(--cn-parent-b); }
+
+  /* ── Main content ── */
+  .main {
+    flex: 1;
+    padding: 40px 48px;
+    overflow-y: auto;
+  }
+
+  /* ── Screens ── */
+  .screen { display: none; }
+  .screen.visible { display: block; }
+
+  /* ── Page header ── */
+  .page-header {
+    margin-bottom: 32px;
+  }
+
+  .page-header h1 {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--cn-forest);
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+
+  .page-header p {
+    font-size: 15px;
+    color: var(--cn-text-secondary);
+    font-weight: 300;
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--cn-surface);
+    border-radius: 12px;
+    border: 1px solid var(--cn-outline-light);
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+
+  .card-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cn-text-muted);
+    margin-bottom: 12px;
+  }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 24px;
+    border-radius: 9999px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    transition: filter 0.12s, opacity 0.12s;
+    text-decoration: none;
+  }
+
+  .btn:hover { filter: brightness(1.08); }
+  .btn:active { opacity: 0.85; }
+
+  .btn-primary { background: var(--cn-green); color: #fff; }
+  .btn-ghost { background: transparent; border: 2px solid var(--cn-green); color: var(--cn-green); }
+  .btn-sm { padding: 8px 18px; font-size: 13px; }
+  .btn-danger { background: #AD4141; color: #fff; }
+  .btn-light { background: var(--cn-green-pale); color: var(--cn-green); }
+
+  /* ── Callout / notice ── */
+  .callout {
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .callout.info { background: var(--cn-green-pale); }
+  .callout.warning { background: var(--cn-amber-light); }
+  .callout.success { background: #E6F7F2; }
+
+  .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .callout-body { font-size: 14px; font-weight: 300; color: var(--cn-text-secondary); line-height: 1.5; }
+  .callout-body strong { font-weight: 700; color: var(--cn-text-primary); }
+
+  /* ── Status chip ── */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .chip.pending { background: var(--cn-amber-light); color: var(--cn-amber); }
+  .chip.agreed { background: var(--cn-green-pale); color: var(--cn-green); }
+  .chip.review { background: var(--cn-parent-b-light); color: #3D5A8A; }
+  .chip.signed { background: #E6F7F2; color: #065444; }
+
+  /* ── ODR Topic progress strip ── */
+  .topic-strip {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 32px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .topic-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    min-width: 60px;
+    position: relative;
+  }
+
+  .topic-node:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 18px;
+    left: calc(50% + 18px);
+    right: calc(-50% + 18px);
+    height: 2px;
+    background: var(--cn-outline-light);
+    z-index: 0;
+  }
+
+  .topic-node.done:not(:last-child)::after { background: var(--cn-green-light); }
+  .topic-node.active:not(:last-child)::after { background: var(--cn-outline-light); }
+
+  .topic-icon {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 2px solid var(--cn-outline-light);
+    background: var(--cn-surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+  }
+
+  .topic-node.done .topic-icon {
+    background: var(--cn-green-pale);
+    border-color: var(--cn-green-light);
+  }
+
+  .topic-node.active .topic-icon {
+    background: var(--cn-green);
+    border-color: var(--cn-green);
+    box-shadow: 0 0 0 4px var(--cn-green-pale);
+  }
+
+  .topic-node.disagreed .topic-icon {
+    background: var(--cn-amber-light);
+    border-color: var(--cn-amber);
+  }
+
+  .topic-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--cn-text-muted);
+    text-align: center;
+    line-height: 1.3;
+    max-width: 64px;
+  }
+
+  .topic-node.active .topic-label { color: var(--cn-green); font-weight: 700; }
+  .topic-node.done .topic-label { color: var(--cn-green-mid); }
+
+  /* ── Proposal box ── */
+  .proposal-box {
+    border-radius: 12px;
+    border: 2px solid var(--cn-outline-light);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .proposal-box.a-proposal { border-color: var(--cn-parent-a-light); }
+  .proposal-box.b-proposal { border-color: var(--cn-parent-b-light); }
+  .proposal-box.highlight { border-color: var(--cn-green-light); background: var(--cn-green-pale); }
+
+  .proposal-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .proposal-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--cn-text-primary);
+  }
+
+  .proposal-body {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--cn-text-secondary);
+    line-height: 1.6;
+  }
+
+  .proposal-note {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--cn-outline-light);
+    font-size: 13px;
+    color: var(--cn-text-muted);
+    font-style: italic;
+  }
+
+  /* ── Radio option ── */
+  .radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 16px 0;
+  }
+
+  .radio-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    border: 2px solid var(--cn-outline-light);
+    cursor: pointer;
+    transition: border-color 0.12s, background 0.12s;
+    background: var(--cn-surface);
+  }
+
+  .radio-option:hover { border-color: var(--cn-green-light); background: var(--cn-green-pale); }
+
+  .radio-option.selected {
+    border-color: var(--cn-green);
+    background: var(--cn-green-pale);
+  }
+
+  .radio-circle {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: 2px solid var(--cn-outline);
+    flex-shrink: 0;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .radio-option.selected .radio-circle {
+    border-color: var(--cn-green);
+    background: var(--cn-green);
+  }
+
+  .radio-option.selected .radio-circle::after {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #fff;
+  }
+
+  .radio-option-text { flex: 1; }
+  .radio-option-title { font-size: 14px; font-weight: 700; color: var(--cn-text-primary); }
+  .radio-option-desc { font-size: 13px; font-weight: 300; color: var(--cn-text-secondary); margin-top: 2px; line-height: 1.4; }
+
+  /* ── Topic list rows ── */
+  .topic-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--cn-outline-light);
+  }
+
+  .topic-row:last-child { border-bottom: none; }
+
+  .topic-row-icon { font-size: 18px; width: 28px; text-align: center; flex-shrink: 0; }
+  .topic-row-name { flex: 1; font-size: 14px; font-weight: 700; color: var(--cn-text-primary); }
+  .topic-row-sub { font-size: 12px; font-weight: 300; color: var(--cn-text-secondary); }
+
+  /* ── Two-col comparison ── */
+  .comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  /* ── Timeline ── */
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .timeline-step {
+    display: flex;
+    gap: 16px;
+    padding-bottom: 24px;
+    position: relative;
+  }
+
+  .timeline-step:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 14px;
+    top: 28px;
+    bottom: 0;
+    width: 2px;
+    background: var(--cn-outline-light);
+  }
+
+  .timeline-step.done::before { background: var(--cn-green-light); }
+
+  .timeline-dot {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--cn-outline);
+    background: var(--cn-surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+    z-index: 1;
+  }
+
+  .timeline-step.done .timeline-dot { background: var(--cn-green-pale); border-color: var(--cn-green-light); }
+  .timeline-step.active .timeline-dot { background: var(--cn-green); border-color: var(--cn-green); color: #fff; }
+  .timeline-step.waiting .timeline-dot { background: var(--cn-amber-light); border-color: var(--cn-amber); }
+
+  .timeline-content { padding-top: 4px; }
+  .timeline-title { font-size: 14px; font-weight: 700; color: var(--cn-text-primary); }
+  .timeline-desc { font-size: 13px; font-weight: 300; color: var(--cn-text-secondary); margin-top: 2px; }
+
+  /* ── Signature block ── */
+  .sig-block {
+    border: 2px dashed var(--cn-outline);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    text-align: center;
+  }
+
+  .sig-block:hover { border-color: var(--cn-green); background: var(--cn-green-pale); }
+
+  .sig-block.signed {
+    border: 2px solid var(--cn-green-light);
+    background: var(--cn-green-pale);
+    cursor: default;
+  }
+
+  .sig-block-name { font-size: 24px; font-family: Georgia, serif; color: var(--cn-forest); font-style: italic; margin-bottom: 4px; }
+  .sig-block-label { font-size: 12px; color: var(--cn-text-muted); }
+
+  /* ── Court doc preview ── */
+  .court-doc {
+    background: #fff;
+    border: 1px solid var(--cn-outline);
+    border-radius: 8px;
+    padding: 32px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #1a1a1a;
+    max-height: 340px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+  }
+
+  .court-doc h2 { font-size: 14px; text-align: center; font-weight: 700; margin-bottom: 4px; }
+  .court-doc .court-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 16px; }
+  .court-doc .section-title { font-weight: 700; font-size: 13px; margin-top: 16px; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .court-doc p { margin-bottom: 8px; }
+
+  /* ── Celebration ── */
+  .celebration-banner {
+    background: linear-gradient(135deg, var(--cn-green) 0%, var(--cn-green-mid) 100%);
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+    color: #fff;
+    margin-bottom: 24px;
+  }
+
+  .celebration-banner .emoji { font-size: 48px; margin-bottom: 16px; display: block; }
+  .celebration-banner h2 { font-size: 26px; font-weight: 900; margin-bottom: 8px; }
+  .celebration-banner p { font-size: 15px; opacity: 0.85; font-weight: 300; }
+
+  /* ── Agreed term rows ── */
+  .agreed-term {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--cn-outline-light);
+  }
+  .agreed-term:last-child { border-bottom: none; }
+  .agreed-term-check { color: var(--cn-green-mid); font-size: 16px; margin-top: 2px; flex-shrink: 0; }
+  .agreed-term-topic { font-size: 13px; font-weight: 700; color: var(--cn-text-muted); min-width: 120px; }
+  .agreed-term-value { font-size: 14px; font-weight: 300; color: var(--cn-text-primary); line-height: 1.5; }
+
+  /* ── Textarea ── */
+  .form-group { margin-bottom: 20px; }
+  .form-label { display: block; font-size: 13px; font-weight: 700; color: var(--cn-text-primary); margin-bottom: 6px; }
+  .form-hint { font-size: 12px; font-weight: 300; color: var(--cn-text-muted); margin-bottom: 6px; }
+  textarea, input[type="text"] {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 2px solid var(--cn-outline-light);
+    background: var(--cn-surface);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--cn-text-primary);
+    resize: vertical;
+    transition: border-color 0.12s;
+  }
+  textarea:focus, input[type="text"]:focus {
+    outline: none;
+    border-color: var(--cn-green);
+  }
+
+  /* ── Action row ── */
+  .action-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+
+  /* ── Divider ── */
+  .divider { height: 1px; background: var(--cn-outline-light); margin: 24px 0; }
+
+  /* ── Two col layout ── */
+  .two-col { display: grid; grid-template-columns: 1fr 320px; gap: 32px; }
+
+  /* ── Utilities ── */
+  .text-muted { color: var(--cn-text-muted); font-size: 13px; font-weight: 300; }
+  .text-sm { font-size: 13px; }
+  .fw-bold { font-weight: 700; }
+  .mb-4 { margin-bottom: 4px; }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-16 { margin-bottom: 16px; }
+  .mb-24 { margin-bottom: 24px; }
+  .mt-16 { margin-top: 16px; }
+  .flex { display: flex; }
+  .flex-col { flex-direction: column; }
+  .gap-8 { gap: 8px; }
+  .gap-12 { gap: 12px; }
+  .items-center { align-items: center; }
+  .justify-between { justify-content: space-between; }
+
+  @media (max-width: 900px) {
+    .two-col { grid-template-columns: 1fr; }
+    .comparison-grid { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .main { padding: 28px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Prototype nav ── -->
+<div class="proto-nav">
+  <span class="proto-nav-label">Screens</span>
+  <div class="proto-nav-screens">
+    <button class="proto-btn active" onclick="showScreen(1)">1 · Alex waits</button>
+    <button class="proto-btn" onclick="showScreen(2)">2 · Jordan invited</button>
+    <button class="proto-btn" onclick="showScreen(3)">3 · Jordan reviews topic</button>
+    <button class="proto-btn" onclick="showScreen(4)">4 · Jordan counter-proposes</button>
+    <button class="proto-btn" onclick="showScreen(5)">5 · Alex notified</button>
+    <button class="proto-btn" onclick="showScreen(6)">6 · Alex compares</button>
+    <button class="proto-btn" onclick="showScreen(7)">7 · Agreement</button>
+    <button class="proto-btn" onclick="showScreen(8)">8 · Sign &amp; file</button>
+  </div>
+  <div class="pov-pills">
+    <span style="color:rgba(255,255,255,0.4);font-size:11px;font-weight:700;align-self:center;letter-spacing:0.06em;text-transform:uppercase;">POV</span>
+    <button class="pov-pill a active" id="pov-a">Alex A</button>
+    <button class="pov-pill b" id="pov-b">Jordan B</button>
+  </div>
+</div>
+
+<!-- ── App shell ── -->
+<div class="app-shell">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">Custody<span>Navigator</span></div>
+    <div class="sidebar-nav">
+      <a href="#">My calendar</a>
+      <a href="#">Manage calendar</a>
+      <a href="#">Schedule summary</a>
+      <a href="#">Schedule templates <span class="sidebar-badge">NEW</span></a>
+      <a href="#" class="active">Parenting plan <span class="sidebar-badge">NEW</span></a>
+      <a href="#">Profile</a>
+      <a href="#">Security</a>
+    </div>
+    <div class="sidebar-footer">
+      <a href="#" style="color:rgba(255,255,255,0.3);text-decoration:none;display:block;margin-bottom:4px;">Contact support</a>
+      <div>Made by InTandem</div>
+    </div>
+  </nav>
+
+  <!-- Main area -->
+  <main class="main">
+
+    <!-- ──────────────────────────────────────────
+         SCREEN 1 · Alex's ODR dashboard — waiting
+    ────────────────────────────────────────── -->
+    <div class="screen visible" id="screen-1">
+
+      <div class="page-header">
+        <div class="flex items-center gap-12 mb-8">
+          <div class="parent-tag a"><span class="dot"></span>Alex's view</div>
+          <div class="chip pending">⏳ Awaiting Jordan's response</div>
+        </div>
+        <h1>Your parenting plan is with Jordan</h1>
+        <p>You sent the plan on August 28. Jordan has 14 days to review each topic.</p>
+      </div>
+
+      <div class="two-col">
+        <div>
+          <div class="callout info">
+            <span class="callout-icon">📬</span>
+            <div class="callout-body">
+              <strong>Jordan received your invitation on Aug 28.</strong> Once Jordan reviews and responds to all 8 topics, you'll get a notification to log back in and compare proposals.
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-label">How the process works</div>
+            <div class="timeline">
+              <div class="timeline-step done">
+                <div class="timeline-dot">✓</div>
+                <div class="timeline-content">
+                  <div class="timeline-title">You built the parenting plan</div>
+                  <div class="timeline-desc">Completed Aug 27 — 8 topics covered</div>
+                </div>
+              </div>
+              <div class="timeline-step done">
+                <div class="timeline-dot">✓</div>
+                <div class="timeline-content">
+                  <div class="timeline-title">Invitation sent to Jordan</div>
+                  <div class="timeline-desc">Email sent Aug 28 · Opened Aug 28</div>
+                </div>
+              </div>
+              <div class="timeline-step waiting">
+                <div class="timeline-dot">⏳</div>
+                <div class="timeline-content">
+                  <div class="timeline-title">Jordan reviews and responds</div>
+                  <div class="timeline-desc">Jordan can accept your proposals or suggest alternatives — you'll be notified when all topics are complete</div>
+                </div>
+              </div>
+              <div class="timeline-step">
+                <div class="timeline-dot">4</div>
+                <div class="timeline-content">
+                  <div class="timeline-title">You review Jordan's responses</div>
+                  <div class="timeline-desc">Accept or counter-propose on any topics you disagree on</div>
+                </div>
+              </div>
+              <div class="timeline-step">
+                <div class="timeline-dot">5</div>
+                <div class="timeline-content">
+                  <div class="timeline-title">Both parents e-sign</div>
+                  <div class="timeline-desc">Digitally sign the agreed parenting plan</div>
+                </div>
+              </div>
+              <div class="timeline-step">
+                <div class="timeline-dot">6</div>
+                <div class="timeline-content">
+                  <div class="timeline-title">File with the court</div>
+                  <div class="timeline-desc">Submit your signed parenting plan to Anoka County District Court</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="action-row">
+            <button class="btn btn-ghost btn-sm" onclick="showScreen(5)">Preview: Jordan responded →</button>
+            <span class="text-muted">Simulates receiving a notification</span>
+          </div>
+        </div>
+
+        <!-- Sidebar plan summary -->
+        <div>
+          <div class="card">
+            <div class="card-label">Your plan at a glance</div>
+            <div style="font-size:13px;font-weight:700;color:var(--cn-text-primary);margin-bottom:4px;">Chen family parenting plan</div>
+            <div style="font-size:12px;color:var(--cn-text-muted);margin-bottom:16px;">Mia Chen · Age 7 · 2nd grade</div>
+            <div class="divider" style="margin:12px 0;"></div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--cn-text-muted);margin-bottom:2px;">Legal custody</div><div style="font-size:13px;font-weight:300;color:var(--cn-text-primary);">Joint — both parents share decisions</div></div>
+              <div><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--cn-text-muted);margin-bottom:2px;">Schedule</div><div style="font-size:13px;font-weight:300;color:var(--cn-text-primary);">2-2-3 rotating (50/50)</div></div>
+              <div><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--cn-text-muted);margin-bottom:2px;">Exchanges</div><div style="font-size:13px;font-weight:300;color:var(--cn-text-primary);">School drop-off and pick-up</div></div>
+              <div><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--cn-text-muted);margin-bottom:2px;">Holidays</div><div style="font-size:13px;font-weight:300;color:var(--cn-text-primary);">Alternating each year</div></div>
+              <div><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--cn-text-muted);margin-bottom:2px;">Child support</div><div style="font-size:13px;font-weight:300;color:var(--cn-text-primary);">Follow MN guidelines</div></div>
+            </div>
+            <div class="divider" style="margin:16px 0;"></div>
+            <div class="chip pending" style="font-size:11px;">8 topics pending Jordan's review</div>
+          </div>
+
+          <div class="card" style="border-color:var(--cn-outline-light);background:var(--cn-surface-warm);">
+            <div style="font-size:13px;font-weight:700;color:var(--cn-text-primary);margin-bottom:4px;">Questions about this process?</div>
+            <div style="font-size:13px;font-weight:300;color:var(--cn-text-secondary);margin-bottom:12px;">Clara, your AI guide, can walk you through what to expect at each step.</div>
+            <button class="btn btn-light btn-sm">Ask Clara</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ──────────────────────────────────────────
+         SCREEN 2 · Jordan's invitation
+    ────────────────────────────────────────── -->
+    <div class="screen" id="screen-2">
+
+      <div class="page-header">
+        <div class="flex items-center gap-12 mb-8">
+          <div class="parent-tag b"><span class="dot"></span>Jordan's view</div>
+        </div>
+        <h1>Alex shared a parenting plan with you</h1>
+        <p>Review each topic and let Alex know if you agree — or suggest something different.</p>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-icon">ℹ️</span>
+        <div class="callout-body">
+          <strong>How this works:</strong> Alex built a parenting plan for Mia. For each topic, you can accept Alex's proposal or suggest a different arrangement. Once you've reviewed everything, Alex will see your responses and you'll work toward an agreement together.
+        </div>
+      </div>
+
+      <div class="card mb-24">
+        <div class="card-label">8 topics to review</div>
+        <div>
+          <div class="topic-row">
+            <div class="topic-row-icon">⚖️</div>
+            <div>
+              <div class="topic-row-name">Legal custody</div>
+              <div class="topic-row-sub">Who makes major decisions for Mia</div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="showScreen(3)">Start →</button>
+          </div>
+          <div class="topic-row">
+            <div class="topic-row-icon">📅</div>
+            <div><div class="topic-row-name">Parenting schedule</div><div class="topic-row-sub">Which days Mia is with each parent</div></div>
+            <span class="chip pending" style="font-size:11px;">After legal custody</span>
+          </div>
+          <div class="topic-row">
+            <div class="topic-row-icon">🚗</div>
+            <div><div class="topic-row-name">Exchanges</div><div class="topic-row-sub">Where and how Mia moves between homes</div></div>
+            <span class="chip pending" style="font-size:11px;">After schedule</span>
+          </div>
+          <div class="topic-row">
+            <div class="topic-row-icon">🎄</div>
+            <div><div class="topic-row-name">Holidays &amp; school breaks</div><div class="topic-row-sub">How holidays and summer are shared</div></div>
+            <span class="chip pending" style="font-size:11px;">Locked</span>
+          </div>
+          <div class="topic-row">
+            <div class="topic-row-icon">📞</div>
+            <div><div class="topic-row-name">Parent-child contact</div><div class="topic-row-sub">Calls, messages, and visits when not in your care</div></div>
+            <span class="chip pending" style="font-size:11px;">Locked</span>
+          </div>
+          <div class="topic-row">
+            <div class="topic-row-icon">🏫</div>
+            <div><div class="topic-row-name">Education</div><div class="topic-row-sub">School enrollment, activities, and records</div></div>
+            <span class="chip pending" style="font-size:11px;">Locked</span>
+          </div>
+          <div class="topic-row">
+            <div class="topic-row-icon">🏥</div>
+            <div><div class="topic-row-name">Medical care</div><div class="topic-row-sub">Healthcare decisions and insurance coverage</div></div>
+            <span class="chip pending" style="font-size:11px;">Locked</span>
+          </div>
+          <div class="topic-row">
+            <div class="topic-row-icon">💵</div>
+            <div><div class="topic-row-name">Child support</div><div class="topic-row-sub">Financial support between parents</div></div>
+            <span class="chip pending" style="font-size:11px;">Locked</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn btn-primary" onclick="showScreen(3)">Start reviewing →</button>
+        <span class="text-muted">Review at your own pace — your progress saves automatically</span>
+      </div>
+    </div>
+
+
+    <!-- ──────────────────────────────────────────
+         SCREEN 3 · Jordan reviews Legal Custody
+    ────────────────────────────────────────── -->
+    <div class="screen" id="screen-3">
+
+      <div class="flex items-center justify-between mb-24">
+        <div class="flex items-center gap-12">
+          <div class="parent-tag b"><span class="dot"></span>Jordan's view</div>
+        </div>
+        <div class="chip pending" style="font-size:11px;">Topic 1 of 8</div>
+      </div>
+
+      <!-- Topic progress strip -->
+      <div class="topic-strip">
+        <div class="topic-node active">
+          <div class="topic-icon" style="color:#fff;font-size:14px;">⚖️</div>
+          <div class="topic-label">Legal custody</div>
+        </div>
+        <div class="topic-node">
+          <div class="topic-icon">📅</div>
+          <div class="topic-label">Schedule</div>
+        </div>
+        <div class="topic-node">
+          <div class="topic-icon">🚗</div>
+          <div class="topic-label">Exchanges</div>
+        </div>
+        <div class="topic-node">
+          <div class="topic-icon">🎄</div>
+          <div class="topic-label">Holidays</div>
+        </div>
+        <div class="topic-node">
+          <div class="topic-icon">📞</div>
+          <div class="topic-label">Contact</div>
+        </div>
+        <div class="topic-node">
+          <div class="topic-icon">🏫</div>
+          <div class="topic-label">Education</div>
+        </div>
+        <div class="topic-node">
+          <div class="topic-icon">🏥</div>
+          <div class="topic-label">Medical</div>
+        </div>
+        <div class="topic-node">
+          <div class="topic-icon">💵</div>
+          <div class="topic-label">Support</div>
+        </div>
+      </div>
+
+      <div class="page-header">
+        <h1>Legal custody</h1>
+        <p>Legal custody determines who makes major decisions about Mia's life — things like schooling, medical care, and religious upbringing.</p>
+      </div>
+
+      <!-- Alex's proposal -->
+      <div class="proposal-box a-proposal">
+        <div class="proposal-header">
+          <div class="parent-tag a"><span class="dot"></span>Alex's proposal</div>
+        </div>
+        <div class="proposal-body">
+          <strong>Joint legal custody</strong> — Both parents share the right and responsibility to make major decisions about Mia's education, health care, and general welfare. Neither parent makes major decisions without the other's agreement.
+        </div>
+      </div>
+
+      <div style="font-size:14px;font-weight:700;color:var(--cn-text-primary);margin-bottom:12px;">What do you think?</div>
+
+      <div class="radio-group" id="custody-options">
+        <div class="radio-option selected" onclick="selectOption(this, 'custody-options')">
+          <div class="radio-circle"></div>
+          <div class="radio-option-text">
+            <div class="radio-option-title">I agree — joint legal custody works for us</div>
+            <div class="radio-option-desc">Both parents make major decisions together</div>
+          </div>
+        </div>
+        <div class="radio-option" onclick="selectOption(this, 'custody-options'); showScreen(4)">
+          <div class="radio-circle"></div>
+          <div class="radio-option-text">
+            <div class="radio-option-title">I'd like to suggest something different</div>
+            <div class="radio-option-desc">You can propose sole legal custody for either parent</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout info" style="margin-top:16px;">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <strong>What does joint legal custody mean in practice?</strong> You'll both need to agree before major decisions — like changing Mia's school or a non-emergency medical procedure. Day-to-day decisions (meals, bedtime, homework) are made by whoever Mia is with that day.
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn btn-primary" onclick="showScreen(4)">I agree — next topic →</button>
+        <button class="btn btn-ghost btn-sm" onclick="showScreen(2)">← Back to all topics</button>
+      </div>
+    </div>
+
+
+    <!-- ──────────────────────────────────────────
+         SCREEN 4 · Jordan's counter-proposal
+    ────────────────────────────────────────── -->
+    <div class="screen" id="screen-4">
+
+      <div class="flex items-center justify-between mb-24">
+        <div class="flex items-center gap-12">
+          <div class="parent-tag b"><span class="dot"></span>Jordan's view</div>
+        </div>
+        <div class="chip pending" style="font-size:11px;">Topic 1 of 8 · Suggesting alternative</div>
+      </div>
+
+      <div class="page-header">
+        <h1>Suggest a different arrangement</h1>
+        <p>Choose what you'd like to propose for legal custody. Alex will review your suggestion and can accept or counter-propose.</p>
+      </div>
+
+      <div class="proposal-box a-proposal mb-16">
+        <div class="proposal-header">
+          <div class="parent-tag a"><span class="dot"></span>Alex proposed</div>
+        </div>
+        <div class="proposal-body"><strong>Joint legal custody</strong> — both parents share decision-making equally</div>
+      </div>
+
+      <div style="font-size:14px;font-weight:700;color:var(--cn-text-primary);margin-bottom:12px;">Your proposal</div>
+
+      <div class="radio-group" id="counter-options">
+        <div class="radio-option" onclick="selectOption(this, 'counter-options')">
+          <div class="radio-circle"></div>
+          <div class="radio-option-text">
+            <div class="radio-option-title">Joint legal custody</div>
+            <div class="radio-option-desc">Both parents make major decisions together — agree with Alex's proposal</div>
+          </div>
+        </div>
+        <div class="radio-option selected" onclick="selectOption(this, 'counter-options')">
+          <div class="radio-circle"></div>
+          <div class="radio-option-text">
+            <div class="radio-option-title">Sole legal custody — Jordan (me)</div>
+            <div class="radio-option-desc">I make major decisions. Alex is kept informed and can share input, but I have final authority.</div>
+          </div>
+        </div>
+        <div class="radio-option" onclick="selectOption(this, 'counter-options')">
+          <div class="radio-circle"></div>
+          <div class="radio-option-text">
+            <div class="radio-option-title">Sole legal custody — Alex</div>
+            <div class="radio-option-desc">Alex makes major decisions. I am kept informed and can share input.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group mt-16">
+        <label class="form-label">Add a note for Alex (optional)</label>
+        <div class="form-hint">Help Alex understand your thinking. You don't have to share anything you're not comfortable with.</div>
+        <textarea rows="3" placeholder="e.g., I'm the primary caregiver and handle most of Mia's day-to-day needs. I'd like to have final say on major decisions while keeping Alex fully informed."></textarea>
+      </div>
+
+      <div class="action-row">
+        <button class="btn btn-primary" onclick="showScreen(2)">Send this proposal to Alex</button>
+        <button class="btn btn-ghost btn-sm" onclick="showScreen(3)">← Back</button>
+      </div>
+    </div>
+
+
+    <!-- ──────────────────────────────────────────
+         SCREEN 5 · Alex notified — Jordan responded
+    ────────────────────────────────────────── -->
+    <div class="screen" id="screen-5">
+
+      <div class="page-header">
+        <div class="flex items-center gap-12 mb-8">
+          <div class="parent-tag a"><span class="dot"></span>Alex's view</div>
+        </div>
+        <h1>Jordan reviewed your plan</h1>
+        <p>Jordan agreed on most topics and suggested different arrangements for two. Review and respond.</p>
+      </div>
+
+      <div class="callout success" style="background:#E6F7F2;">
+        <span class="callout-icon">🎉</span>
+        <div class="callout-body">
+          <strong>Good news — you're mostly aligned.</strong> Jordan agreed with your proposals on 6 out of 8 topics. Review the two where Jordan suggested something different and decide how you'd like to respond.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">All 8 topics</div>
+        <div>
+          <div class="topic-row">
+            <div class="topic-row-icon">⚖️</div>
+            <div style="flex:1">
+              <div class="topic-row-name">Legal custody</div>
+              <div class="topic-row-sub">Jordan suggested sole legal custody</div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="showScreen(6)">Review →</button>
+          </div>
+          <div class="topic-row">
+            <div class="topic-row-icon">📅</div>
+            <div style="flex:1">
+              <div class="topic-row-name">Parenting schedule</div>
+              <div class="topic-row-sub">Jordan suggested a 4-3 schedule</div>
+            </div>
+            <button class="btn btn-primary btn-sm" style="background:var(--cn-amber);">Review →</button>
+          </div>
+          <div class="topic-row">
+            <div class="topic-row-icon">🚗</div>
+            <div style="flex:1"><div class="topic-row-name">Exchanges</div><div class="topic-row-sub">Jordan agreed with your proposal</div></div>
+            <div class="chip agreed">✓ Agreed</div>
+          </div>
+          <div class="topic-row">
+            <div class="topic-row-icon">🎄</div>
+            <div style="flex:1"><div class="topic-row-name">Holidays &amp; school breaks</div><div class="topic-row-sub">Jordan agreed with your proposal</div></div>
+            <div class="chip agreed">✓ Agreed</div>
+          </div>
+          <div class="topic-row">
+            <div class="topic-row-icon">📞</div>
+            <div style="flex:1"><div class="topic-row-name">Parent-child contact</div><div class="topic-row-sub">Jordan agreed with your proposal</div></div>
+            <div class="chip agreed">✓ Agreed</div>
+          </div>
+          <div class="topic-row">
+            <div class="topic-row-icon">🏫</div>
+            <div style="flex:1"><div class="topic-row-name">Education</div><div class="topic-row-sub">Jordan agreed with your proposal</div></div>
+            <div class="chip agreed">✓ Agreed</div>
+          </div>
+          <div class="topic-row">
+            <div class="topic-row-icon">🏥</div>
+            <div style="flex:1"><div class="topic-row-name">Medical care</div><div class="topic-row-sub">Jordan agreed with your proposal</div></div>
+            <div class="chip agreed">✓ Agreed</div>
+          </div>
+          <div class="topic-row">
+            <div class="topic-row-icon">💵</div>
+            <div style="flex:1"><div class="topic-row-name">Child support</div><div class="topic-row-sub">Jordan agreed with your proposal</div></div>
+            <div class="chip agreed">✓ Agreed</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn btn-primary" onclick="showScreen(6)">Review legal custody →</button>
+      </div>
+    </div>
+
+
+    <!-- ──────────────────────────────────────────
+         SCREEN 6 · Alex reviews comparison
+    ────────────────────────────────────────── -->
+    <div class="screen" id="screen-6">
+
+      <div class="flex items-center justify-between mb-24">
+        <div class="flex items-center gap-12">
+          <div class="parent-tag a"><span class="dot"></span>Alex's view</div>
+        </div>
+        <div class="chip review" style="font-size:11px;">Needs your response</div>
+      </div>
+
+      <div class="page-header">
+        <h1>Legal custody — two different proposals</h1>
+        <p>You and Jordan see this differently. Review both proposals and decide how you'd like to respond.</p>
+      </div>
+
+      <div class="comparison-grid mb-24">
+        <div class="proposal-box a-proposal">
+          <div class="proposal-header">
+            <div class="parent-tag a"><span class="dot"></span>Your proposal</div>
+          </div>
+          <div class="proposal-body">
+            <strong>Joint legal custody</strong><br><br>
+            Both parents share the right and responsibility to make major decisions about Mia's education, health care, and general welfare. Neither parent makes major decisions without the other's agreement.
+          </div>
+        </div>
+        <div class="proposal-box b-proposal">
+          <div class="proposal-header">
+            <div class="parent-tag b"><span class="dot"></span>Jordan's proposal</div>
+          </div>
+          <div class="proposal-body">
+            <strong>Sole legal custody — Jordan</strong><br><br>
+            Jordan makes major decisions about Mia's education, health care, and general welfare. Alex is kept informed and can share input, but Jordan has final authority.
+          </div>
+          <div class="proposal-note">
+            Jordan's note: "I'm the primary caregiver and handle most of Mia's day-to-day needs. I'd like to have final say on major decisions while keeping Alex fully informed."
+          </div>
+        </div>
+      </div>
+
+      <div style="font-size:14px;font-weight:700;color:var(--cn-text-primary);margin-bottom:12px;">How do you want to respond?</div>
+
+      <div class="radio-group" id="response-options">
+        <div class="radio-option" onclick="selectOption(this, 'response-options')">
+          <div class="radio-circle"></div>
+          <div class="radio-option-text">
+            <div class="radio-option-title">Accept Jordan's proposal — sole legal custody for Jordan</div>
+            <div class="radio-option-desc">Jordan will have final authority on major decisions. You'll be informed and can share input.</div>
+          </div>
+        </div>
+        <div class="radio-option selected" onclick="selectOption(this, 'response-options')">
+          <div class="radio-circle"></div>
+          <div class="radio-option-text">
+            <div class="radio-option-title">Stay with my original proposal — joint legal custody</div>
+            <div class="radio-option-desc">Jordan will see your response and can accept or suggest again</div>
+          </div>
+        </div>
+        <div class="radio-option" onclick="selectOption(this, 'response-options')">
+          <div class="radio-circle"></div>
+          <div class="radio-option-text">
+            <div class="radio-option-title">Suggest a new arrangement</div>
+            <div class="radio-option-desc">Propose something different — like a tie-breaking process for major decisions</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout warning" style="margin-top:16px;">
+        <span class="callout-icon">💬</span>
+        <div class="callout-body">
+          <strong>If you can't agree after a few rounds,</strong> you can request a mediator, ask Clara for guidance on what courts typically order, or consult an attorney. You don't have to work this out alone.
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn btn-primary" onclick="showScreen(7)">Send response to Jordan</button>
+        <button class="btn btn-ghost btn-sm" onclick="showScreen(5)">← All topics</button>
+      </div>
+    </div>
+
+
+    <!-- ──────────────────────────────────────────
+         SCREEN 7 · Agreement reached
+    ────────────────────────────────────────── -->
+    <div class="screen" id="screen-7">
+
+      <div class="celebration-banner">
+        <span class="emoji">🤝</span>
+        <h2>You and Jordan have a full agreement</h2>
+        <p>All 8 topics are resolved. Review the agreed terms below, then both of you will sign the parenting plan.</p>
+      </div>
+
+      <div class="card mb-24">
+        <div class="card-label">Agreed parenting plan — Mia Chen</div>
+        <div>
+          <div class="agreed-term">
+            <span class="agreed-term-check">✓</span>
+            <div class="agreed-term-topic">Legal custody</div>
+            <div class="agreed-term-value">Joint legal custody — both parents make major decisions together</div>
+          </div>
+          <div class="agreed-term">
+            <span class="agreed-term-check">✓</span>
+            <div class="agreed-term-topic">Schedule</div>
+            <div class="agreed-term-value">2-2-3 rotating schedule (50/50 parenting time)</div>
+          </div>
+          <div class="agreed-term">
+            <span class="agreed-term-check">✓</span>
+            <div class="agreed-term-topic">Exchanges</div>
+            <div class="agreed-term-value">School drop-off and pick-up at Anoka Elementary. Jordan drops off Monday, Alex picks up Wednesday, alternating Fridays.</div>
+          </div>
+          <div class="agreed-term">
+            <span class="agreed-term-check">✓</span>
+            <div class="agreed-term-topic">Holidays</div>
+            <div class="agreed-term-value">Alternating each year. Alex: Thanksgiving, Christmas Eve, Spring Break (odd years). Jordan: Christmas Day, New Year's, Spring Break (even years). Summer split equally.</div>
+          </div>
+          <div class="agreed-term">
+            <span class="agreed-term-check">✓</span>
+            <div class="agreed-term-topic">Parent-child contact</div>
+            <div class="agreed-term-value">Each parent may call or message Mia daily when she is with the other parent, between 6 pm and 8 pm.</div>
+          </div>
+          <div class="agreed-term">
+            <span class="agreed-term-check">✓</span>
+            <div class="agreed-term-topic">Education</div>
+            <div class="agreed-term-value">Both parents attend school events and parent-teacher conferences. Either parent may access school records and communicate with school staff.</div>
+          </div>
+          <div class="agreed-term">
+            <span class="agreed-term-check">✓</span>
+            <div class="agreed-term-topic">Medical care</div>
+            <div class="agreed-term-value">Mia covered under Jordan's health insurance. Both parents notified of medical appointments. Routine care does not require joint approval; non-emergency procedures do.</div>
+          </div>
+          <div class="agreed-term">
+            <span class="agreed-term-check">✓</span>
+            <div class="agreed-term-topic">Child support</div>
+            <div class="agreed-term-value">Child support calculated under Minnesota guidelines. Both parents share extraordinary expenses (medical, education, childcare) 50/50.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout success" style="background:#E6F7F2;">
+        <span class="callout-icon">📄</span>
+        <div class="callout-body">
+          <strong>What happens next:</strong> Both you and Jordan will e-sign this plan. Once signed, you can file it with Anoka County District Court. We'll generate the correct court form for you.
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn btn-primary" onclick="showScreen(8)">Review and sign →</button>
+      </div>
+    </div>
+
+
+    <!-- ──────────────────────────────────────────
+         SCREEN 8 · Sign & file
+    ────────────────────────────────────────── -->
+    <div class="screen" id="screen-8">
+
+      <div class="page-header">
+        <div class="flex items-center gap-12 mb-8">
+          <div class="parent-tag a"><span class="dot"></span>Alex's view</div>
+        </div>
+        <h1>Sign your parenting plan</h1>
+        <p>Review the document below, then tap to add your signature. Jordan will be notified to sign as well.</p>
+      </div>
+
+      <div class="two-col">
+        <div>
+          <!-- Court doc preview -->
+          <div class="card-label mb-8">Document preview</div>
+          <div class="court-doc">
+            <div class="court-header">
+              <h2>STATE OF MINNESOTA</h2>
+              <h2>DISTRICT COURT</h2>
+              <h2>TENTH JUDICIAL DISTRICT</h2>
+              <div style="margin-top:8px;font-size:12px;">County of Anoka &nbsp;|&nbsp; Family Court Division</div>
+              <div style="font-size:12px;margin-top:4px;">In re the Marriage of: Alex Chen and Jordan Chen</div>
+              <div style="font-size:12px;margin-top:4px;">Court File No.: ___-FA-26-____</div>
+            </div>
+
+            <div class="section-title">Parenting Plan</div>
+            <p>This parenting plan is entered into by Alex Chen ("Parent A") and Jordan Chen ("Parent B") for the benefit of their minor child, Mia Chen, born March 14, 2019.</p>
+
+            <div class="section-title">I. Legal Custody</div>
+            <p>The parties shall have <strong>joint legal custody</strong> of the minor child. Both parents share the right and responsibility to make major decisions regarding the child's education, health care, and general welfare. Neither parent shall make major decisions unilaterally without the agreement of the other parent.</p>
+
+            <div class="section-title">II. Parenting Time — 2-2-3 Rotating Schedule</div>
+            <p>Parent A (Alex) shall have parenting time: Monday and Tuesday in Week 1; Friday, Saturday, and Sunday in Week 1; Wednesday and Thursday in Week 2 (alternating).</p>
+            <p>Parent B (Jordan) shall have parenting time: Wednesday and Thursday in Week 1; Monday, Tuesday, Wednesday, and Thursday in Week 2; Friday, Saturday, and Sunday in Week 2 (alternating).</p>
+            <p>This schedule results in approximately 50% parenting time for each parent.</p>
+
+            <div class="section-title">III. Exchanges</div>
+            <p>Exchanges shall occur at the child's school (Anoka Elementary) via school drop-off and pick-up. Weekend exchanges shall occur at 6:00 p.m. at the residence of the receiving parent.</p>
+
+            <div class="section-title">IV. Holidays and School Breaks</div>
+            <p>In odd-numbered years: Parent A (Alex) has the child for Thanksgiving, Christmas Eve (Dec 24), and Spring Break. Parent B (Jordan) has the child for Christmas Day (Dec 25) and New Year's.</p>
+            <p>In even-numbered years: the holiday schedule reverses.</p>
+            <p>Summer break shall be divided equally between the parents, with each parent having no less than two consecutive weeks.</p>
+
+            <div class="section-title">V. Parent-Child Contact</div>
+            <p>Each parent may contact the child by telephone or video call daily when the child is with the other parent, between 6:00 p.m. and 8:00 p.m. Neither parent shall interfere with this contact.</p>
+
+            <div class="section-title">VI. Education</div>
+            <p>Both parents shall have access to all educational records. Both parents are encouraged to attend school events and parent-teacher conferences. Either parent may communicate with school staff regarding the child's educational needs.</p>
+
+            <div class="section-title">VII. Medical Care</div>
+            <p>The minor child shall be covered under Parent B's (Jordan's) health insurance. Both parents shall be notified of medical appointments. Routine medical care may be obtained by the parent who has parenting time. Non-emergency medical procedures require the agreement of both parents.</p>
+
+            <div class="section-title">VIII. Child Support</div>
+            <p>Child support shall be calculated pursuant to Minnesota Statutes § 518A. Extraordinary expenses, including unreimbursed medical expenses, childcare, and educational expenses, shall be shared equally by both parents.</p>
+          </div>
+
+          <!-- Signatures -->
+          <div class="card-label mb-8">Signatures</div>
+
+          <div class="sig-block signed" id="sig-alex">
+            <div class="sig-block-name">Alex Chen</div>
+            <div class="sig-block-label">Signed · Sep 1, 2026, 2:14 PM</div>
+          </div>
+
+          <div class="sig-block" id="sig-jordan" onclick="signJordan()">
+            <div style="font-size:14px;color:var(--cn-text-muted);font-weight:400;" id="sig-jordan-prompt">Waiting for Jordan to sign</div>
+            <div class="sig-block-label">Tap to simulate Jordan's signature</div>
+          </div>
+
+          <div id="action-sign" class="action-row">
+            <button class="btn btn-primary" onclick="completeSigning()">Sign and notify Jordan</button>
+            <button class="btn btn-ghost btn-sm" onclick="showScreen(7)">← Back to agreement</button>
+          </div>
+
+          <div id="action-filed" style="display:none;" class="action-row">
+            <div>
+              <div class="callout success" style="background:#E6F7F2;margin-bottom:16px;">
+                <span class="callout-icon">🎉</span>
+                <div class="callout-body">
+                  <strong>Both parents have signed.</strong> Download your signed parenting plan and file it with Anoka County District Court.
+                </div>
+              </div>
+              <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                <button class="btn btn-primary">Download signed plan (.pdf)</button>
+                <button class="btn btn-ghost">Filing instructions →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div>
+          <div class="card">
+            <div class="card-label">What you're signing</div>
+            <div style="font-size:13px;font-weight:300;color:var(--cn-text-secondary);line-height:1.6;margin-bottom:12px;">This is a legally binding parenting plan. Once signed by both parents, it can be filed with the court and will govern your custody arrangement.</div>
+            <div class="divider" style="margin:12px 0;"></div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div class="flex items-center gap-8">
+                <div class="chip signed" style="font-size:11px;">✓ Signed</div>
+                <span style="font-size:13px;font-weight:700;color:var(--cn-text-primary);">Alex Chen</span>
+              </div>
+              <div class="flex items-center gap-8" id="jordan-sig-status">
+                <div class="chip pending" style="font-size:11px;">⏳ Pending</div>
+                <span style="font-size:13px;font-weight:400;color:var(--cn-text-secondary);">Jordan Chen</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="background:var(--cn-surface-warm);">
+            <div style="font-size:13px;font-weight:700;color:var(--cn-text-primary);margin-bottom:4px;">Need to file with the court?</div>
+            <div style="font-size:13px;font-weight:300;color:var(--cn-text-secondary);margin-bottom:12px;">We'll generate the correct Minnesota District Court filing forms. Filing fees typically range from $75–$400 depending on your situation.</div>
+            <button class="btn btn-light btn-sm">See filing steps</button>
+          </div>
+
+          <div class="card" style="background:var(--cn-surface-warm);">
+            <div style="font-size:13px;font-weight:700;color:var(--cn-text-primary);margin-bottom:4px;">Want a lawyer to review this first?</div>
+            <div style="font-size:13px;font-weight:300;color:var(--cn-text-secondary);margin-bottom:12px;">An attorney can review your plan before you sign — often for a flat fee. This isn't required, but it can give you peace of mind.</div>
+            <button class="btn btn-light btn-sm">Find an attorney</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  let currentScreen = 1;
+
+  function showScreen(n) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('visible'));
+    document.getElementById('screen-' + n).classList.add('visible');
+    document.querySelectorAll('.proto-btn').forEach((btn, i) => {
+      btn.classList.toggle('active', i === n - 1);
+    });
+    currentScreen = n;
+    updatePovPills(n);
+  }
+
+  function updatePovPills(n) {
+    const aScreens = [1, 5, 6, 7, 8];
+    const bScreens = [2, 3, 4];
+    document.getElementById('pov-a').classList.toggle('active', aScreens.includes(n));
+    document.getElementById('pov-b').classList.toggle('active', bScreens.includes(n));
+  }
+
+  function selectOption(el, groupId) {
+    document.querySelectorAll('#' + groupId + ' .radio-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function signJordan() {
+    const block = document.getElementById('sig-jordan');
+    if (block.classList.contains('signed')) return;
+    block.classList.add('signed');
+    block.innerHTML = '<div class="sig-block-name">Jordan Chen</div><div class="sig-block-label">Signed · Sep 1, 2026, 3:47 PM</div>';
+    document.getElementById('jordan-sig-status').innerHTML =
+      '<div class="chip signed" style="font-size:11px;">✓ Signed</div>' +
+      '<span style="font-size:13px;font-weight:700;color:var(--cn-text-primary);">Jordan Chen</span>';
+    document.getElementById('action-sign').style.display = 'none';
+    document.getElementById('action-filed').style.display = 'block';
+  }
+
+  function completeSigning() {
+    // Simulate Alex already signed; trigger jordan signing simulation notice
+    const block = document.getElementById('sig-jordan');
+    block.innerHTML = '<div style="font-size:14px;color:var(--cn-text-muted);">Waiting for Jordan to sign — notification sent</div><div class="sig-block-label">Tap to simulate Jordan signing</div>';
+  }
+
+  // Init
+  updatePovPills(1);
+</script>
+</body>
+</html>
