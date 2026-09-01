@@ -680,6 +680,73 @@
     .sidebar { display: none; }
     .main { padding: 28px 24px; }
   }
+
+  /* ── Step bar (intake progress) ── */
+  .step-bar { display: flex; align-items: center; margin-bottom: 28px; overflow-x: auto; }
+  .step-item { display: flex; align-items: center; gap: 6px; }
+  .step-dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--cn-outline); background: var(--cn-surface); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: var(--cn-text-muted); flex-shrink: 0; }
+  .step-item.done .step-dot { background: var(--cn-green-pale); border-color: var(--cn-green-light); color: var(--cn-green); }
+  .step-item.active .step-dot { background: var(--cn-green); border-color: var(--cn-green); color: #fff; box-shadow: 0 0 0 3px var(--cn-green-pale); }
+  .step-lbl { font-size: 11px; font-weight: 600; color: var(--cn-text-muted); white-space: nowrap; }
+  .step-item.active .step-lbl { color: var(--cn-green); font-weight: 700; }
+  .step-item.done .step-lbl { color: var(--cn-green-mid); }
+  .step-conn { width: 28px; height: 2px; background: var(--cn-outline-light); flex-shrink: 0; }
+  .step-item.done + .step-conn { background: var(--cn-green-light); }
+
+  /* ── Phase badge ── */
+  .phase-badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 9999px; background: var(--cn-green-pale); color: var(--cn-green); font-size: 11px; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 10px; }
+
+  /* ── Form grid ── */
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+  /* ── Optional / deferred badge ── */
+  .optional-badge { display: inline-flex; align-items: center; gap: 4px; background: var(--cn-amber-light); color: var(--cn-amber); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 9999px; margin-left: 8px; letter-spacing: 0.04em; text-transform: uppercase; }
+
+  /* ── Upload card ── */
+  .upload-card { border: 2px dashed var(--cn-outline); border-radius: 10px; padding: 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; margin-bottom: 10px; }
+  .upload-card:hover { border-color: var(--cn-green); background: var(--cn-green-pale); }
+  .upload-card.uploaded { border: 2px solid var(--cn-green-light); background: var(--cn-green-pale); }
+
+  /* ── Schedule selection card ── */
+  .schedule-card { border: 2px solid var(--cn-outline-light); border-radius: 12px; padding: 20px; cursor: pointer; margin-bottom: 12px; }
+  .schedule-card.selected { border-color: var(--cn-green); background: var(--cn-green-pale); }
+
+  /* ── Mini calendar ── */
+  .mini-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin: 10px 0; }
+  .mini-cal-hdr { font-size: 9px; font-weight: 600; color: var(--cn-text-muted); text-align: center; }
+  .mini-cal-day { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; }
+  .mini-cal-day.a { background: var(--cn-parent-a); color: rgba(255,255,255,0.9); }
+  .mini-cal-day.b { background: var(--cn-parent-b); color: rgba(255,255,255,0.9); }
+
+  /* ── Toggle card ── */
+  .toggle-card { display: flex; align-items: flex-start; gap: 16px; padding: 16px 20px; border-radius: 10px; border: 2px solid var(--cn-outline-light); background: var(--cn-surface); margin-bottom: 12px; cursor: pointer; transition: border-color 0.12s, background 0.12s; }
+  .toggle-card.on { border-color: var(--cn-green-light); background: var(--cn-green-pale); }
+  .toggle-switch { width: 36px; height: 20px; border-radius: 9999px; background: var(--cn-outline); flex-shrink: 0; margin-top: 2px; position: relative; transition: background 0.15s; }
+  .toggle-switch::after { content: ''; width: 14px; height: 14px; border-radius: 50%; background: #fff; position: absolute; top: 3px; left: 3px; transition: transform 0.15s; }
+  .toggle-card.on .toggle-switch { background: var(--cn-green); }
+  .toggle-card.on .toggle-switch::after { transform: translateX(16px); }
+  .toggle-card-title { font-size: 14px; font-weight: 700; color: var(--cn-text-primary); margin-bottom: 2px; }
+  .toggle-card-desc { font-size: 13px; font-weight: 300; color: var(--cn-text-secondary); line-height: 1.4; }
+
+  /* ── Proto phase label ── */
+  .proto-phase-label { color: rgba(255,255,255,0.3); font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; align-self: center; padding: 0 4px; flex-shrink: 0; }
+
+  /* ── Select ── */
+  select { width: 100%; padding: 12px 14px; border-radius: 8px; border: 2px solid var(--cn-outline-light); background: var(--cn-surface); font-family: inherit; font-size: 14px; font-weight: 300; color: var(--cn-text-primary); cursor: pointer; }
+  select:focus { outline: none; border-color: var(--cn-green); }
+
+  /* ── Table ── */
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table th { text-align: left; font-size: 11px; font-weight: 700; color: var(--cn-text-muted); letter-spacing: 0.06em; text-transform: uppercase; padding: 0 12px 10px 0; border-bottom: 2px solid var(--cn-outline-light); }
+  .data-table td { padding: 12px 12px 12px 0; border-bottom: 1px solid var(--cn-outline-light); font-size: 14px; font-weight: 300; color: var(--cn-text-primary); }
+  .data-table tr:last-child td { border-bottom: none; }
+
+  /* ── Highlight row (summary screens) ── */
+  .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--cn-outline-light); }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-label { font-size: 13px; font-weight: 700; color: var(--cn-text-muted); }
+  .summary-value { font-size: 14px; font-weight: 300; color: var(--cn-text-primary); text-align: right; }
 </style>
 </head>
 <body>
@@ -688,14 +755,30 @@
 <div class="proto-nav">
   <span class="proto-nav-label">Screens</span>
   <div class="proto-nav-screens">
-    <button class="proto-btn active" onclick="showScreen(1)">1 · Alex waits</button>
-    <button class="proto-btn" onclick="showScreen(2)">2 · Jordan invited</button>
-    <button class="proto-btn" onclick="showScreen(3)">3 · Jordan reviews topic</button>
-    <button class="proto-btn" onclick="showScreen(4)">4 · Jordan counter-proposes</button>
-    <button class="proto-btn" onclick="showScreen(5)">5 · Alex notified</button>
-    <button class="proto-btn" onclick="showScreen(6)">6 · Alex compares</button>
-    <button class="proto-btn" onclick="showScreen(7)">7 · Agreement</button>
-    <button class="proto-btn" onclick="showScreen(8)">8 · Sign &amp; file</button>
+    <span class="proto-phase-label">INTAKE</span>
+    <button class="proto-btn active" data-screen="1" onclick="showScreen(1)">1 · About you</button>
+    <button class="proto-btn" data-screen="2" onclick="showScreen(2)">2 · Your family</button>
+    <button class="proto-btn" data-screen="3" onclick="showScreen(3)">3 · Case history</button>
+    <button class="proto-btn" data-screen="4" onclick="showScreen(4)">4 · Safety</button>
+    <button class="proto-btn" data-screen="5" onclick="showScreen(5)">5 · Documents</button>
+    <button class="proto-btn" data-screen="6" onclick="showScreen(6)">6 · Ready</button>
+    <span class="proto-phase-label">PLAN</span>
+    <button class="proto-btn" data-screen="7" onclick="showScreen(7)">7 · Custody</button>
+    <button class="proto-btn" data-screen="8" onclick="showScreen(8)">8 · Schedule</button>
+    <button class="proto-btn" data-screen="9" onclick="showScreen(9)">9 · Holidays</button>
+    <button class="proto-btn" data-screen="10" onclick="showScreen(10)">10 · Education</button>
+    <button class="proto-btn" data-screen="11" onclick="showScreen(11)">11 · Support</button>
+    <button class="proto-btn" data-screen="12" onclick="showScreen(12)">12 · Rules</button>
+    <span class="proto-phase-label">ODR</span>
+    <button class="proto-btn" data-screen="13" onclick="showScreen(13)">13 · Alex waits</button>
+    <button class="proto-btn" data-screen="14" onclick="showScreen(14)">14 · Jordan invited</button>
+    <button class="proto-btn" data-screen="15" onclick="showScreen(15)">15 · Jordan reviews</button>
+    <button class="proto-btn" data-screen="16" onclick="showScreen(16)">16 · Jordan counter</button>
+    <button class="proto-btn" data-screen="17" onclick="showScreen(17)">17 · Alex notified</button>
+    <button class="proto-btn" data-screen="18" onclick="showScreen(18)">18 · Alex compares</button>
+    <span class="proto-phase-label">SIGN</span>
+    <button class="proto-btn" data-screen="19" onclick="showScreen(19)">19 · Agreement</button>
+    <button class="proto-btn" data-screen="20" onclick="showScreen(20)">20 · Sign &amp; file</button>
   </div>
   <div class="pov-pills">
     <span style="color:rgba(255,255,255,0.4);font-size:11px;font-weight:700;align-self:center;letter-spacing:0.06em;text-transform:uppercase;">POV</span>
@@ -729,9 +812,906 @@
   <main class="main">
 
     <!-- ──────────────────────────────────────────
-         SCREEN 1 · Alex's ODR dashboard — waiting
+         SCREEN 1 · Intake — About you
     ────────────────────────────────────────── -->
     <div class="screen visible" id="screen-1">
+      <div class="phase-badge">Intake · Step 1 of 6</div>
+      <div class="step-bar">
+        <div class="step-item active"><div class="step-dot">1</div><span class="step-lbl">About you</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">2</div><span class="step-lbl">Your family</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">3</div><span class="step-lbl">Case history</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">4</div><span class="step-lbl">Safety</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">5</div><span class="step-lbl">Documents</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">6</div><span class="step-lbl">Ready</span></div>
+      </div>
+      <div class="page-header">
+        <h1>Tell us about yourself</h1>
+        <p>This information helps Custody Navigator prepare your parenting plan. It will not be shared without your permission.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Your contact information</div>
+        <div class="form-row mb-16">
+          <div class="form-group">
+            <label class="form-label">First name</label>
+            <input type="text" value="Alex">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last name</label>
+            <input type="text" value="Chen">
+          </div>
+        </div>
+        <div class="form-group mb-16">
+          <label class="form-label">Street address</label>
+          <input type="text" value="1247 Birchwood Ave">
+        </div>
+        <div class="form-row-3 mb-16">
+          <div class="form-group">
+            <label class="form-label">City</label>
+            <input type="text" value="Blaine">
+          </div>
+          <div class="form-group">
+            <label class="form-label">State</label>
+            <input type="text" value="MN">
+          </div>
+          <div class="form-group">
+            <label class="form-label">ZIP</label>
+            <input type="text" value="55434">
+          </div>
+        </div>
+        <div class="form-row mb-16">
+          <div class="form-group">
+            <label class="form-label">County</label>
+            <select><option selected>Anoka County</option></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone</label>
+            <input type="text" value="(612) 555-0184">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="text" value="alex.chen@email.com">
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Legal identification</div>
+        <div class="callout info mb-16">
+          <span class="callout-icon">🔒</span>
+          <div class="callout-body"><strong>Sensitive fields.</strong> Your SSN and driver's license are used only for court document generation. You can add these later if you prefer.</div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Social Security Number <span class="optional-badge">ADD LATER</span></label>
+            <input type="text" placeholder="XXX-XX-XXXX" style="background:var(--cn-amber-light);border-color:var(--cn-amber);">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Driver's license <span class="optional-badge">ADD LATER</span></label>
+            <input type="text" placeholder="MN license number" style="background:var(--cn-amber-light);border-color:var(--cn-amber);">
+          </div>
+        </div>
+      </div>
+      <div class="action-row">
+        <button class="btn btn-primary" onclick="showScreen(2)">Save and continue →</button>
+      </div>
+    </div>
+
+    <!-- ──────────────────────────────────────────
+         SCREEN 2 · Intake — Your family
+    ────────────────────────────────────────── -->
+    <div class="screen" id="screen-2">
+      <div class="phase-badge">Intake · Step 2 of 6</div>
+      <div class="step-bar">
+        <div class="step-item done"><div class="step-dot">✓</div><span class="step-lbl">About you</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item active"><div class="step-dot">2</div><span class="step-lbl">Your family</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">3</div><span class="step-lbl">Case history</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">4</div><span class="step-lbl">Safety</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">5</div><span class="step-lbl">Documents</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">6</div><span class="step-lbl">Ready</span></div>
+      </div>
+      <div class="page-header">
+        <h1>Your family</h1>
+        <p>Tell us about your co-parent and your children. This will appear in your parenting plan.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Co-parent information</div>
+        <div class="form-row mb-16">
+          <div class="form-group">
+            <label class="form-label">First name</label>
+            <input type="text" value="Jordan">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last name</label>
+            <input type="text" value="Chen">
+          </div>
+        </div>
+        <div class="form-row mb-16">
+          <div class="form-group">
+            <label class="form-label">Email (for plan invitation)</label>
+            <input type="text" value="jordan.chen@email.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone</label>
+            <input type="text" value="(612) 555-0291">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Social Security Number <span class="optional-badge">ADD LATER</span></label>
+            <input type="text" placeholder="XXX-XX-XXXX" style="background:var(--cn-amber-light);border-color:var(--cn-amber);">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Driver's license <span class="optional-badge">ADD LATER</span></label>
+            <input type="text" placeholder="MN license number" style="background:var(--cn-amber-light);border-color:var(--cn-amber);">
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Child · 1 of 1</div>
+        <div class="form-row mb-16">
+          <div class="form-group">
+            <label class="form-label">First name</label>
+            <input type="text" value="Mia">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last name</label>
+            <input type="text" value="Chen">
+          </div>
+        </div>
+        <div class="form-row mb-16">
+          <div class="form-group">
+            <label class="form-label">Date of birth</label>
+            <input type="text" value="March 14, 2019">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Grade / school year</label>
+            <input type="text" value="2nd grade">
+          </div>
+        </div>
+        <div class="form-row mb-16">
+          <div class="form-group">
+            <label class="form-label">School</label>
+            <input type="text" value="Lincoln Elementary">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Pediatrician</label>
+            <input type="text" value="Dr. Sarah Park">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Birth certificate <span style="font-weight:300;color:var(--cn-text-muted);margin-left:4px;">— used for court filing</span></label>
+          <div class="upload-card uploaded">
+            <span style="font-size:22px;">📄</span>
+            <div>
+              <div style="font-size:14px;font-weight:700;color:var(--cn-green);">mia_chen_birth_cert.pdf</div>
+              <div style="font-size:12px;color:var(--cn-text-muted);">Uploaded · 142 KB</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="action-row">
+        <button class="btn btn-ghost" onclick="showScreen(1)">← Back</button>
+        <button class="btn btn-primary" onclick="showScreen(3)">Save and continue →</button>
+      </div>
+    </div>
+
+    <!-- ──────────────────────────────────────────
+         SCREEN 3 · Intake — Case history
+    ────────────────────────────────────────── -->
+    <div class="screen" id="screen-3">
+      <div class="phase-badge">Intake · Step 3 of 6</div>
+      <div class="step-bar">
+        <div class="step-item done"><div class="step-dot">✓</div><span class="step-lbl">About you</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item done"><div class="step-dot">✓</div><span class="step-lbl">Your family</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item active"><div class="step-dot">3</div><span class="step-lbl">Case history</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">4</div><span class="step-lbl">Safety</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">5</div><span class="step-lbl">Documents</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">6</div><span class="step-lbl">Ready</span></div>
+      </div>
+      <div class="page-header">
+        <h1>Your case history</h1>
+        <p>Background on your relationship and any existing legal history helps us set up the right documents for your county.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Relationship timeline</div>
+        <div class="form-row mb-16">
+          <div class="form-group">
+            <label class="form-label">Date of marriage</label>
+            <input type="text" value="June 15, 2013">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Date of separation</label>
+            <input type="text" value="February 3, 2025">
+          </div>
+        </div>
+        <div class="form-group mb-16">
+          <label class="form-label">Where are you and Jordan currently living?</label>
+          <div class="radio-group" id="living-grp">
+            <div class="radio-option selected" onclick="selectOption(this,'living-grp')">
+              <div class="radio-circle"></div>
+              <div class="radio-option-text">
+                <div class="radio-option-title">Separate residences in the same city or county</div>
+              </div>
+            </div>
+            <div class="radio-option" onclick="selectOption(this,'living-grp')">
+              <div class="radio-circle"></div>
+              <div class="radio-option-text">
+                <div class="radio-option-title">Different cities or counties</div>
+              </div>
+            </div>
+            <div class="radio-option" onclick="selectOption(this,'living-grp')">
+              <div class="radio-circle"></div>
+              <div class="radio-option-text">
+                <div class="radio-option-title">Still living together</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Prior legal orders</div>
+        <div class="form-group mb-16">
+          <label class="form-label">Is there an existing custody or parenting order?</label>
+          <div class="radio-group" id="prior-order-grp">
+            <div class="radio-option" onclick="selectOption(this,'prior-order-grp')">
+              <div class="radio-circle"></div>
+              <div class="radio-option-text"><div class="radio-option-title">Yes — I have an existing order</div></div>
+            </div>
+            <div class="radio-option selected" onclick="selectOption(this,'prior-order-grp')">
+              <div class="radio-circle"></div>
+              <div class="radio-option-text"><div class="radio-option-title">No — this is our first parenting plan</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Are there any pending court proceedings?</label>
+          <div class="radio-group" id="pending-grp">
+            <div class="radio-option" onclick="selectOption(this,'pending-grp')">
+              <div class="radio-circle"></div>
+              <div class="radio-option-text"><div class="radio-option-title">Yes</div></div>
+            </div>
+            <div class="radio-option selected" onclick="selectOption(this,'pending-grp')">
+              <div class="radio-circle"></div>
+              <div class="radio-option-text"><div class="radio-option-title">No</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="action-row">
+        <button class="btn btn-ghost" onclick="showScreen(2)">← Back</button>
+        <button class="btn btn-primary" onclick="showScreen(4)">Save and continue →</button>
+      </div>
+    </div>
+
+    <!-- ──────────────────────────────────────────
+         SCREEN 4 · Intake — Safety & health
+    ────────────────────────────────────────── -->
+    <div class="screen" id="screen-4">
+      <div class="phase-badge">Intake · Step 4 of 6</div>
+      <div class="step-bar">
+        <div class="step-item done"><div class="step-dot">✓</div><span class="step-lbl">About you</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item done"><div class="step-dot">✓</div><span class="step-lbl">Your family</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item done"><div class="step-dot">✓</div><span class="step-lbl">Case history</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item active"><div class="step-dot">4</div><span class="step-lbl">Safety</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">5</div><span class="step-lbl">Documents</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">6</div><span class="step-lbl">Ready</span></div>
+      </div>
+      <div class="page-header">
+        <h1>Safety and health</h1>
+        <p>Your answers help us flag anything the court may need to know. Your responses are private and never shared with your co-parent.</p>
+      </div>
+      <div class="callout warning mb-16">
+        <span class="callout-icon">🔒</span>
+        <div class="callout-body"><strong>These answers are confidential.</strong> Jordan will not see your responses to these questions. If you're in immediate danger, please contact emergency services.</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Domestic safety</div>
+        <table class="data-table" style="margin-bottom:8px;">
+          <thead><tr><th></th><th style="width:60px;text-align:center;">Yes</th><th style="width:60px;text-align:center;">No</th></tr></thead>
+          <tbody>
+            <tr><td>Has there been any physical violence between you and Jordan?</td>
+              <td style="text-align:center;"><input type="radio" name="s1" value="y"></td><td style="text-align:center;"><input type="radio" name="s1" value="n" checked></td></tr>
+            <tr><td>Has there been a restraining order or order for protection?</td>
+              <td style="text-align:center;"><input type="radio" name="s2" value="y"></td><td style="text-align:center;"><input type="radio" name="s2" value="n" checked></td></tr>
+            <tr><td>Have there been any calls to law enforcement involving your household?</td>
+              <td style="text-align:center;"><input type="radio" name="s3" value="y"></td><td style="text-align:center;"><input type="radio" name="s3" value="n" checked></td></tr>
+            <tr><td>Are you concerned about your or your child's safety in Jordan's care?</td>
+              <td style="text-align:center;"><input type="radio" name="s4" value="y"></td><td style="text-align:center;"><input type="radio" name="s4" value="n" checked></td></tr>
+            <tr><td>Is there a history of harassment, stalking, or emotional abuse?</td>
+              <td style="text-align:center;"><input type="radio" name="s5" value="y"></td><td style="text-align:center;"><input type="radio" name="s5" value="n" checked></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-label">Mental and physical health</div>
+        <table class="data-table" style="margin-bottom:8px;">
+          <thead><tr><th></th><th style="width:60px;text-align:center;">Yes</th><th style="width:60px;text-align:center;">No</th></tr></thead>
+          <tbody>
+            <tr><td>Is there a history of substance abuse that affects parenting?</td>
+              <td style="text-align:center;"><input type="radio" name="h1" value="y"></td><td style="text-align:center;"><input type="radio" name="h1" value="n" checked></td></tr>
+            <tr><td>Are there mental health diagnoses relevant to Mia's care?</td>
+              <td style="text-align:center;"><input type="radio" name="h2" value="y"></td><td style="text-align:center;"><input type="radio" name="h2" value="n" checked></td></tr>
+            <tr><td>Does Mia have any special medical, educational, or therapeutic needs?</td>
+              <td style="text-align:center;"><input type="radio" name="h3" value="y"></td><td style="text-align:center;"><input type="radio" name="h3" value="n" checked></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="action-row">
+        <button class="btn btn-ghost" onclick="showScreen(3)">← Back</button>
+        <button class="btn btn-primary" onclick="showScreen(5)">Save and continue →</button>
+      </div>
+    </div>
+
+    <!-- ──────────────────────────────────────────
+         SCREEN 5 · Intake — Financial documents
+    ────────────────────────────────────────── -->
+    <div class="screen" id="screen-5">
+      <div class="phase-badge">Intake · Step 5 of 6</div>
+      <div class="step-bar">
+        <div class="step-item done"><div class="step-dot">✓</div><span class="step-lbl">About you</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item done"><div class="step-dot">✓</div><span class="step-lbl">Your family</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item done"><div class="step-dot">✓</div><span class="step-lbl">Case history</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item done"><div class="step-dot">✓</div><span class="step-lbl">Safety</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item active"><div class="step-dot">5</div><span class="step-lbl">Documents</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">6</div><span class="step-lbl">Ready</span></div>
+      </div>
+      <div class="page-header">
+        <h1>Financial documents</h1>
+        <p>Minnesota courts use income information to calculate child support. Upload what you have — you can add more later.</p>
+      </div>
+      <div class="card">
+        <div class="card-label">Required for child support calculation</div>
+        <div class="form-group">
+          <label class="form-label">Most recent pay stub</label>
+          <div class="upload-card uploaded">
+            <span style="font-size:22px;">📄</span>
+            <div>
+              <div style="font-size:14px;font-weight:700;color:var(--cn-green);">paystub_aug2025.pdf</div>
+              <div style="font-size:12px;color:var(--cn-text-muted);">Uploaded · 87 KB</div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Most recent tax return (Form 1040)</label>
+          <div class="upload-card uploaded">
+            <span style="font-size:22px;">📄</span>
+            <div>
+              <div style="font-size:14px;font-weight:700;color:var(--cn-green);">1040_2024.pdf</div>
+              <div style="font-size:12px;color:var(--cn-text-muted);">Uploaded · 214 KB</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-label">Optional — upload if available</div>
+        <div class="form-group">
+          <label class="form-label">W-2 or 1099 <span class="optional-badge">Optional</span></label>
+          <div class="upload-card">
+            <span style="font-size:22px;">⬆️</span>
+            <div>
+              <div style="font-size:14px;font-weight:700;color:var(--cn-text-secondary);">Click to upload</div>
+              <div style="font-size:12px;color:var(--cn-text-muted);">PDF, JPG, or PNG · up to 10 MB</div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Existing separation agreement <span class="optional-badge">Optional</span></label>
+          <div class="upload-card">
+            <span style="font-size:22px;">⬆️</span>
+            <div>
+              <div style="font-size:14px;font-weight:700;color:var(--cn-text-secondary);">Click to upload</div>
+              <div style="font-size:12px;color:var(--cn-text-muted);">PDF, JPG, or PNG · up to 10 MB</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="action-row">
+        <button class="btn btn-ghost" onclick="showScreen(4)">← Back</button>
+        <button class="btn btn-primary" onclick="showScreen(6)">Save and continue →</button>
+      </div>
+    </div>
+
+    <!-- ──────────────────────────────────────────
+         SCREEN 6 · Intake complete — Ready to plan
+    ────────────────────────────────────────── -->
+    <div class="screen" id="screen-6">
+      <div class="celebration-banner">
+        <span class="emoji">🎉</span>
+        <h2>Intake complete</h2>
+        <p>You've given us everything we need to build your parenting plan. Great work — this is the hard part.</p>
+      </div>
+      <div class="card mb-16">
+        <div class="card-label">What we gathered</div>
+        <div class="summary-row"><span class="summary-label">Your information</span><span class="summary-value">Alex Chen · Anoka County, MN</span></div>
+        <div class="summary-row"><span class="summary-label">Co-parent</span><span class="summary-value">Jordan Chen</span></div>
+        <div class="summary-row"><span class="summary-label">Child</span><span class="summary-value">Mia Chen · Age 7 · 2nd grade</span></div>
+        <div class="summary-row"><span class="summary-label">Case type</span><span class="summary-value">Initial parenting plan · Anoka County</span></div>
+        <div class="summary-row"><span class="summary-label">Documents uploaded</span><span class="summary-value">3 files · Birth cert, pay stub, tax return</span></div>
+        <div class="summary-row"><span class="summary-label">Deferred fields</span><span class="summary-value">SSN and DL — add before filing</span></div>
+      </div>
+      <div class="callout info mb-24">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body"><strong>Next up: build your parenting plan.</strong> You'll make decisions about custody, Mia's schedule, holidays, and more. Jordan will review your plan and you'll negotiate any differences before you both sign.</div>
+      </div>
+      <div class="action-row">
+        <button class="btn btn-primary" onclick="showScreen(7)">Start building your parenting plan →</button>
+      </div>
+    </div>
+
+    <!-- ──────────────────────────────────────────
+         SCREEN 7 · Plan — Custody type
+    ────────────────────────────────────────── -->
+    <div class="screen" id="screen-7">
+      <div class="phase-badge">Parenting plan · Step 1 of 6</div>
+      <div class="step-bar">
+        <div class="step-item active"><div class="step-dot">1</div><span class="step-lbl">Custody</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">2</div><span class="step-lbl">Schedule</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">3</div><span class="step-lbl">Holidays</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">4</div><span class="step-lbl">Education</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">5</div><span class="step-lbl">Support</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">6</div><span class="step-lbl">Rules</span></div>
+      </div>
+      <div class="page-header">
+        <h1>Custody arrangement</h1>
+        <p>These decisions form the foundation of your parenting plan. Jordan will review and can propose changes.</p>
+      </div>
+      <div class="card mb-16">
+        <div class="card-label">Legal custody <span style="font-weight:300;font-size:12px;color:var(--cn-text-muted);letter-spacing:0;text-transform:none;margin-left:6px;">Who makes major decisions for Mia</span></div>
+        <div class="callout info mb-16">
+          <span class="callout-icon">ℹ️</span>
+          <div class="callout-body"><strong>Legal custody</strong> covers decisions about Mia's education, medical care, religious upbringing, and extracurricular activities — not day-to-day parenting.</div>
+        </div>
+        <div class="radio-group" id="legal-cust-grp">
+          <div class="radio-option selected" onclick="selectOption(this,'legal-cust-grp')">
+            <div class="radio-circle"></div>
+            <div class="radio-option-text">
+              <div class="radio-option-title">Joint legal custody</div>
+              <div class="radio-option-desc">Both parents share decision-making. Major decisions require agreement.</div>
+            </div>
+          </div>
+          <div class="radio-option" onclick="selectOption(this,'legal-cust-grp')">
+            <div class="radio-circle"></div>
+            <div class="radio-option-text">
+              <div class="radio-option-title">Sole legal custody — Alex</div>
+              <div class="radio-option-desc">Alex makes major decisions independently.</div>
+            </div>
+          </div>
+          <div class="radio-option" onclick="selectOption(this,'legal-cust-grp')">
+            <div class="radio-circle"></div>
+            <div class="radio-option-text">
+              <div class="radio-option-title">Sole legal custody — Jordan</div>
+              <div class="radio-option-desc">Jordan makes major decisions independently.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card mb-16">
+        <div class="card-label">Physical custody <span style="font-weight:300;font-size:12px;color:var(--cn-text-muted);letter-spacing:0;text-transform:none;margin-left:6px;">Where Mia lives day-to-day</span></div>
+        <div class="radio-group" id="phys-cust-grp">
+          <div class="radio-option selected" onclick="selectOption(this,'phys-cust-grp')">
+            <div class="radio-circle"></div>
+            <div class="radio-option-text">
+              <div class="radio-option-title">Shared physical custody — equal (50/50)</div>
+              <div class="radio-option-desc">Mia spends roughly equal time with both parents.</div>
+            </div>
+          </div>
+          <div class="radio-option" onclick="selectOption(this,'phys-cust-grp')">
+            <div class="radio-circle"></div>
+            <div class="radio-option-text">
+              <div class="radio-option-title">Shared physical custody — primary with Alex</div>
+              <div class="radio-option-desc">Mia lives primarily with Alex; Jordan has regular parenting time.</div>
+            </div>
+          </div>
+          <div class="radio-option" onclick="selectOption(this,'phys-cust-grp')">
+            <div class="radio-circle"></div>
+            <div class="radio-option-text">
+              <div class="radio-option-title">Shared physical custody — primary with Jordan</div>
+              <div class="radio-option-desc">Mia lives primarily with Jordan; Alex has regular parenting time.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="action-row">
+        <button class="btn btn-ghost" onclick="showScreen(6)">← Back</button>
+        <button class="btn btn-primary" onclick="showScreen(8)">Save and continue →</button>
+      </div>
+    </div>
+
+    <!-- ──────────────────────────────────────────
+         SCREEN 8 · Plan — Parenting schedule
+    ────────────────────────────────────────── -->
+    <div class="screen" id="screen-8">
+      <div class="phase-badge">Parenting plan · Step 2 of 6</div>
+      <div class="step-bar">
+        <div class="step-item done"><div class="step-dot">✓</div><span class="step-lbl">Custody</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item active"><div class="step-dot">2</div><span class="step-lbl">Schedule</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">3</div><span class="step-lbl">Holidays</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">4</div><span class="step-lbl">Education</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">5</div><span class="step-lbl">Support</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">6</div><span class="step-lbl">Rules</span></div>
+      </div>
+      <div class="page-header">
+        <h1>Parenting schedule</h1>
+        <p>Choose a schedule template for Mia. You can customize it after Jordan agrees.</p>
+      </div>
+      <div class="callout info mb-16">
+        <span class="callout-icon">🗓️</span>
+        <div class="callout-body">Templates show a <strong>two-week repeating pattern.</strong> The colored circles show who has Mia each day — <span style="color:var(--cn-parent-a);font-weight:700;">orange = Alex</span>, <span style="color:#3D5A8A;font-weight:700;">blue = Jordan</span>.</div>
+      </div>
+      <div class="schedule-card selected">
+        <div class="flex items-center justify-between mb-8">
+          <div style="font-size:15px;font-weight:700;color:var(--cn-text-primary);">2-2-3 rotation</div>
+          <div class="chip agreed">Selected</div>
+        </div>
+        <div style="font-size:13px;font-weight:300;color:var(--cn-text-secondary);margin-bottom:8px;">2 days with Alex · 2 days with Jordan · 3 days with Alex — then reverses. Results in equal 50/50 time.</div>
+        <div class="mini-cal">
+          <div class="mini-cal-hdr">S</div><div class="mini-cal-hdr">M</div><div class="mini-cal-hdr">T</div><div class="mini-cal-hdr">W</div><div class="mini-cal-hdr">T</div><div class="mini-cal-hdr">F</div><div class="mini-cal-hdr">S</div>
+          <div class="mini-cal-day a">1</div><div class="mini-cal-day a">2</div><div class="mini-cal-day b">3</div><div class="mini-cal-day b">4</div><div class="mini-cal-day a">5</div><div class="mini-cal-day a">6</div><div class="mini-cal-day a">7</div>
+          <div class="mini-cal-day b">8</div><div class="mini-cal-day b">9</div><div class="mini-cal-day a">10</div><div class="mini-cal-day a">11</div><div class="mini-cal-day b">12</div><div class="mini-cal-day b">13</div><div class="mini-cal-day b">14</div>
+        </div>
+        <div style="font-size:12px;color:var(--cn-text-muted);">🌙 7 overnights/2wk Alex · 7 overnights/2wk Jordan</div>
+      </div>
+      <div class="schedule-card">
+        <div class="flex items-center justify-between mb-8">
+          <div style="font-size:15px;font-weight:700;color:var(--cn-text-primary);">4-3 schedule</div>
+        </div>
+        <div style="font-size:13px;font-weight:300;color:var(--cn-text-secondary);margin-bottom:8px;">4 days with one parent, 3 with the other. Good for older children who prefer fewer transitions.</div>
+        <div class="mini-cal">
+          <div class="mini-cal-hdr">S</div><div class="mini-cal-hdr">M</div><div class="mini-cal-hdr">T</div><div class="mini-cal-hdr">W</div><div class="mini-cal-hdr">T</div><div class="mini-cal-hdr">F</div><div class="mini-cal-hdr">S</div>
+          <div class="mini-cal-day a">1</div><div class="mini-cal-day a">2</div><div class="mini-cal-day a">3</div><div class="mini-cal-day a">4</div><div class="mini-cal-day b">5</div><div class="mini-cal-day b">6</div><div class="mini-cal-day b">7</div>
+          <div class="mini-cal-day a">8</div><div class="mini-cal-day a">9</div><div class="mini-cal-day a">10</div><div class="mini-cal-day a">11</div><div class="mini-cal-day b">12</div><div class="mini-cal-day b">13</div><div class="mini-cal-day b">14</div>
+        </div>
+        <div style="font-size:12px;color:var(--cn-text-muted);">🌙 8 overnights/2wk Alex · 6 overnights/2wk Jordan</div>
+      </div>
+      <div class="schedule-card">
+        <div class="flex items-center justify-between mb-8">
+          <div style="font-size:15px;font-weight:700;color:var(--cn-text-primary);">Alternating weeks</div>
+        </div>
+        <div style="font-size:13px;font-weight:300;color:var(--cn-text-secondary);margin-bottom:8px;">Full week with each parent alternating. Fewer transitions. Best for school-age children comfortable with longer stretches.</div>
+        <div class="mini-cal">
+          <div class="mini-cal-hdr">S</div><div class="mini-cal-hdr">M</div><div class="mini-cal-hdr">T</div><div class="mini-cal-hdr">W</div><div class="mini-cal-hdr">T</div><div class="mini-cal-hdr">F</div><div class="mini-cal-hdr">S</div>
+          <div class="mini-cal-day a">1</div><div class="mini-cal-day a">2</div><div class="mini-cal-day a">3</div><div class="mini-cal-day a">4</div><div class="mini-cal-day a">5</div><div class="mini-cal-day a">6</div><div class="mini-cal-day a">7</div>
+          <div class="mini-cal-day b">8</div><div class="mini-cal-day b">9</div><div class="mini-cal-day b">10</div><div class="mini-cal-day b">11</div><div class="mini-cal-day b">12</div><div class="mini-cal-day b">13</div><div class="mini-cal-day b">14</div>
+        </div>
+        <div style="font-size:12px;color:var(--cn-text-muted);">🌙 7 overnights/2wk Alex · 7 overnights/2wk Jordan</div>
+      </div>
+      <div class="action-row">
+        <button class="btn btn-ghost" onclick="showScreen(7)">← Back</button>
+        <button class="btn btn-primary" onclick="showScreen(9)">Save and continue →</button>
+      </div>
+    </div>
+
+    <!-- ──────────────────────────────────────────
+         SCREEN 9 · Plan — Holidays & exchanges
+    ────────────────────────────────────────── -->
+    <div class="screen" id="screen-9">
+      <div class="phase-badge">Parenting plan · Step 3 of 6</div>
+      <div class="step-bar">
+        <div class="step-item done"><div class="step-dot">✓</div><span class="step-lbl">Custody</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item done"><div class="step-dot">✓</div><span class="step-lbl">Schedule</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item active"><div class="step-dot">3</div><span class="step-lbl">Holidays</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">4</div><span class="step-lbl">Education</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">5</div><span class="step-lbl">Support</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">6</div><span class="step-lbl">Rules</span></div>
+      </div>
+      <div class="page-header">
+        <h1>Holidays and special days</h1>
+        <p>These dates override the regular schedule. You can alternate holidays year-to-year or assign each to one parent.</p>
+      </div>
+      <div class="card mb-16">
+        <div class="card-label">Holiday schedule</div>
+        <table class="data-table">
+          <thead><tr><th>Holiday</th><th>Even years</th><th>Odd years</th></tr></thead>
+          <tbody>
+            <tr><td>Thanksgiving</td><td><select style="width:auto;padding:6px 10px;"><option selected>Alex</option><option>Jordan</option><option>Alternate</option></select></td><td><select style="width:auto;padding:6px 10px;"><option>Alex</option><option selected>Jordan</option></select></td></tr>
+            <tr><td>Christmas Eve</td><td><select style="width:auto;padding:6px 10px;"><option selected>Alex</option><option>Jordan</option></select></td><td><select style="width:auto;padding:6px 10px;"><option>Alex</option><option selected>Jordan</option></select></td></tr>
+            <tr><td>Christmas Day</td><td><select style="width:auto;padding:6px 10px;"><option>Alex</option><option selected>Jordan</option></select></td><td><select style="width:auto;padding:6px 10px;"><option selected>Alex</option><option>Jordan</option></select></td></tr>
+            <tr><td>New Year's Eve</td><td><select style="width:auto;padding:6px 10px;"><option>Alex</option><option selected>Jordan</option></select></td><td><select style="width:auto;padding:6px 10px;"><option selected>Alex</option><option>Jordan</option></select></td></tr>
+            <tr><td>Mother's Day</td><td><select style="width:auto;padding:6px 10px;"><option>Alex</option><option selected>Jordan</option></select></td><td><select style="width:auto;padding:6px 10px;"><option>Alex</option><option selected>Jordan</option></select></td></tr>
+            <tr><td>Father's Day</td><td><select style="width:auto;padding:6px 10px;"><option selected>Alex</option><option>Jordan</option></select></td><td><select style="width:auto;padding:6px 10px;"><option selected>Alex</option><option>Jordan</option></select></td></tr>
+            <tr><td>Mia's birthday</td><td><select style="width:auto;padding:6px 10px;"><option selected>Alternate</option><option>Alex</option><option>Jordan</option></select></td><td><select style="width:auto;padding:6px 10px;"><option selected>Alternate</option></select></td></tr>
+            <tr><td>Spring break</td><td><select style="width:auto;padding:6px 10px;"><option selected>Alex</option><option>Jordan</option></select></td><td><select style="width:auto;padding:6px 10px;"><option>Alex</option><option selected>Jordan</option></select></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card mb-16">
+        <div class="card-label">Exchange logistics</div>
+        <div class="form-group mb-16">
+          <label class="form-label">Standard exchange time</label>
+          <select><option selected>6:00 PM</option><option>5:00 PM</option><option>7:00 PM</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Exchange location</label>
+          <input type="text" value="Lincoln Elementary School (on school days) / Birchwood Park (other days)">
+        </div>
+      </div>
+      <div class="action-row">
+        <button class="btn btn-ghost" onclick="showScreen(8)">← Back</button>
+        <button class="btn btn-primary" onclick="showScreen(10)">Save and continue →</button>
+      </div>
+    </div>
+
+    <!-- ──────────────────────────────────────────
+         SCREEN 10 · Plan — Education, medical & childcare
+    ────────────────────────────────────────── -->
+    <div class="screen" id="screen-10">
+      <div class="phase-badge">Parenting plan · Step 4 of 6</div>
+      <div class="step-bar">
+        <div class="step-item done"><div class="step-dot">✓</div><span class="step-lbl">Custody</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item done"><div class="step-dot">✓</div><span class="step-lbl">Schedule</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item done"><div class="step-dot">✓</div><span class="step-lbl">Holidays</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item active"><div class="step-dot">4</div><span class="step-lbl">Education</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">5</div><span class="step-lbl">Support</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">6</div><span class="step-lbl">Rules</span></div>
+      </div>
+      <div class="page-header">
+        <h1>Education, medical and childcare</h1>
+        <p>Document Mia's current providers and how you'll coordinate her care going forward.</p>
+      </div>
+      <div class="card mb-16">
+        <div class="card-label">Education</div>
+        <div class="form-row mb-16">
+          <div class="form-group">
+            <label class="form-label">School district</label>
+            <input type="text" value="Anoka-Hennepin School District 11">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Current school</label>
+            <input type="text" value="Lincoln Elementary">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">School decision rule</label>
+          <div class="radio-group" id="school-rule">
+            <div class="radio-option selected" onclick="selectOption(this,'school-rule')">
+              <div class="radio-circle"></div>
+              <div class="radio-option-text"><div class="radio-option-title">Joint decision required for school changes</div></div>
+            </div>
+            <div class="radio-option" onclick="selectOption(this,'school-rule')">
+              <div class="radio-circle"></div>
+              <div class="radio-option-text"><div class="radio-option-title">Either parent may enroll in activities; major school changes require agreement</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card mb-16">
+        <div class="card-label">Medical</div>
+        <div class="form-row mb-16">
+          <div class="form-group">
+            <label class="form-label">Pediatrician</label>
+            <input type="text" value="Dr. Sarah Park — Allina Health">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Health insurance carrier</label>
+            <input type="text" value="Blue Cross Blue Shield MN">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Who carries health insurance?</label>
+          <div class="radio-group" id="insurance-grp">
+            <div class="radio-option selected" onclick="selectOption(this,'insurance-grp')">
+              <div class="radio-circle"></div>
+              <div class="radio-option-text"><div class="radio-option-title">Alex carries insurance; Jordan reimburses 50% of premiums</div></div>
+            </div>
+            <div class="radio-option" onclick="selectOption(this,'insurance-grp')">
+              <div class="radio-circle"></div>
+              <div class="radio-option-text"><div class="radio-option-title">Jordan carries insurance; Alex reimburses 50% of premiums</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card mb-16">
+        <div class="card-label">Childcare</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Childcare provider <span class="optional-badge">Optional</span></label>
+            <input type="text" placeholder="Provider name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Childcare cost split</label>
+            <select><option selected>50% each</option><option>Pro-rata by income</option><option>Alex pays 100%</option><option>Jordan pays 100%</option></select>
+          </div>
+        </div>
+      </div>
+      <div class="action-row">
+        <button class="btn btn-ghost" onclick="showScreen(9)">← Back</button>
+        <button class="btn btn-primary" onclick="showScreen(11)">Save and continue →</button>
+      </div>
+    </div>
+
+    <!-- ──────────────────────────────────────────
+         SCREEN 11 · Plan — Child support
+    ────────────────────────────────────────── -->
+    <div class="screen" id="screen-11">
+      <div class="phase-badge">Parenting plan · Step 5 of 6</div>
+      <div class="step-bar">
+        <div class="step-item done"><div class="step-dot">✓</div><span class="step-lbl">Custody</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item done"><div class="step-dot">✓</div><span class="step-lbl">Schedule</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item done"><div class="step-dot">✓</div><span class="step-lbl">Holidays</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item done"><div class="step-dot">✓</div><span class="step-lbl">Education</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item active"><div class="step-dot">5</div><span class="step-lbl">Support</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item"><div class="step-dot">6</div><span class="step-lbl">Rules</span></div>
+      </div>
+      <div class="page-header">
+        <h1>Child support</h1>
+        <p>Minnesota uses a formula based on both parents' incomes and parenting time. These numbers are an estimate — a family law attorney or the court can calculate the final amount.</p>
+      </div>
+      <div class="callout info mb-16">
+        <span class="callout-icon">🧮</span>
+        <div class="callout-body"><strong>This is an estimate only.</strong> The Minnesota Child Support Calculator uses gross income, parenting time percentage, and cost-sharing obligations. The final amount will be determined by the court.</div>
+      </div>
+      <div class="card mb-16">
+        <div class="card-label">Income information</div>
+        <div class="form-row mb-16">
+          <div class="form-group">
+            <label class="form-label">Alex's gross monthly income</label>
+            <input type="text" value="$6,800">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Jordan's gross monthly income</label>
+            <input type="text" value="$5,400">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Parenting time split</label>
+          <select><option selected>50% / 50% (equal parenting time)</option><option>60% / 40%</option><option>70% / 30%</option></select>
+        </div>
+      </div>
+      <div class="card mb-16">
+        <div class="card-label">Estimated support calculation</div>
+        <div class="summary-row"><span class="summary-label">Combined monthly income</span><span class="summary-value">$12,200</span></div>
+        <div class="summary-row"><span class="summary-label">Alex's income share</span><span class="summary-value">55.7%</span></div>
+        <div class="summary-row"><span class="summary-label">Jordan's income share</span><span class="summary-value">44.3%</span></div>
+        <div class="summary-row"><span class="summary-label">Parenting time</span><span class="summary-value">50% / 50%</span></div>
+        <div class="summary-row" style="border-top:2px solid var(--cn-outline-light);margin-top:8px;padding-top:16px;">
+          <span class="summary-label" style="font-weight:700;color:var(--cn-text-primary);">Estimated net obligation</span>
+          <span class="summary-value" style="font-weight:700;font-size:16px;color:var(--cn-green);">$0 — incomes nearly equal</span>
+        </div>
+        <div style="font-size:12px;color:var(--cn-text-muted);margin-top:12px;">At equal parenting time and similar incomes, the MN formula often results in minimal or no transfer. Verify with the court's calculator before filing.</div>
+      </div>
+      <div class="card mb-16">
+        <div class="card-label">Shared expenses</div>
+        <table class="data-table">
+          <thead><tr><th>Expense</th><th>Split</th></tr></thead>
+          <tbody>
+            <tr><td>Uninsured medical expenses</td><td><select style="width:auto;padding:6px 10px;"><option selected>50% each</option><option>Pro-rata</option></select></td></tr>
+            <tr><td>Extracurricular activities</td><td><select style="width:auto;padding:6px 10px;"><option selected>50% each</option><option>Pro-rata</option></select></td></tr>
+            <tr><td>School supplies and fees</td><td><select style="width:auto;padding:6px 10px;"><option selected>50% each</option><option>Pro-rata</option></select></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="action-row">
+        <button class="btn btn-ghost" onclick="showScreen(10)">← Back</button>
+        <button class="btn btn-primary" onclick="showScreen(12)">Save and continue →</button>
+      </div>
+    </div>
+
+    <!-- ──────────────────────────────────────────
+         SCREEN 12 · Plan — Parenting rules & send
+    ────────────────────────────────────────── -->
+    <div class="screen" id="screen-12">
+      <div class="phase-badge">Parenting plan · Step 6 of 6</div>
+      <div class="step-bar">
+        <div class="step-item done"><div class="step-dot">✓</div><span class="step-lbl">Custody</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item done"><div class="step-dot">✓</div><span class="step-lbl">Schedule</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item done"><div class="step-dot">✓</div><span class="step-lbl">Holidays</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item done"><div class="step-dot">✓</div><span class="step-lbl">Education</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item done"><div class="step-dot">✓</div><span class="step-lbl">Support</span></div>
+        <div class="step-conn"></div>
+        <div class="step-item active"><div class="step-dot">6</div><span class="step-lbl">Rules</span></div>
+      </div>
+      <div class="page-header">
+        <h1>Parenting rules</h1>
+        <p>These provisions will appear in your parenting plan. Toggle the ones that apply to your situation.</p>
+      </div>
+      <div class="card mb-16">
+        <div class="card-label">Communication and logistics</div>
+        <div class="toggle-card on" onclick="this.classList.toggle('on')">
+          <div class="toggle-switch"></div>
+          <div>
+            <div class="toggle-card-title">Right of first refusal</div>
+            <div class="toggle-card-desc">If the parent with Mia needs childcare for more than 4 hours, the other parent gets the first opportunity to care for her.</div>
+          </div>
+        </div>
+        <div class="toggle-card on" onclick="this.classList.toggle('on')">
+          <div class="toggle-switch"></div>
+          <div>
+            <div class="toggle-card-title">New partners and household members</div>
+            <div class="toggle-card-desc">Both parents agree to introduce new romantic partners to Mia only after the relationship has been ongoing for at least 6 months.</div>
+          </div>
+        </div>
+        <div class="toggle-card on" onclick="this.classList.toggle('on')">
+          <div class="toggle-switch"></div>
+          <div>
+            <div class="toggle-card-title">Travel notice</div>
+            <div class="toggle-card-desc">Either parent must give 14 days notice before taking Mia out of state. Trips outside the U.S. require 30 days notice and written consent.</div>
+          </div>
+        </div>
+        <div class="toggle-card" onclick="this.classList.toggle('on')">
+          <div class="toggle-switch"></div>
+          <div>
+            <div class="toggle-card-title">Social media restrictions</div>
+            <div class="toggle-card-desc">Neither parent will post photos or identifying information about Mia on public social media without mutual consent.</div>
+          </div>
+        </div>
+      </div>
+      <div class="card mb-16">
+        <div class="card-label">Dispute resolution</div>
+        <div class="toggle-card on" onclick="this.classList.toggle('on')">
+          <div class="toggle-switch"></div>
+          <div>
+            <div class="toggle-card-title">Mediation before court</div>
+            <div class="toggle-card-desc">If parents cannot agree on a modification, they agree to attempt mediation before filing with the court.</div>
+          </div>
+        </div>
+      </div>
+      <div class="callout info mb-24">
+        <span class="callout-icon">📤</span>
+        <div class="callout-body"><strong>Ready to send to Jordan.</strong> Once you save, we'll invite Jordan to review your plan. Jordan will have 14 days to respond to each topic. You'll be notified when there's activity.</div>
+      </div>
+      <div class="action-row">
+        <button class="btn btn-ghost" onclick="showScreen(11)">← Back</button>
+        <button class="btn btn-primary" onclick="showScreen(13)">Save plan and send to Jordan →</button>
+      </div>
+    </div>
+
+    <!-- ──────────────────────────────────────────
+         SCREEN 13 · Alex's ODR dashboard — waiting
+    ────────────────────────────────────────── -->
+    <div class="screen" id="screen-13">
 
       <div class="page-header">
         <div class="flex items-center gap-12 mb-8">
@@ -800,7 +1780,7 @@
           </div>
 
           <div class="action-row">
-            <button class="btn btn-ghost btn-sm" onclick="showScreen(5)">Preview: Jordan responded →</button>
+            <button class="btn btn-ghost btn-sm" onclick="showScreen(17)">Preview: Jordan responded →</button>
             <span class="text-muted">Simulates receiving a notification</span>
           </div>
         </div>
@@ -834,9 +1814,9 @@
 
 
     <!-- ──────────────────────────────────────────
-         SCREEN 2 · Jordan's invitation
+         SCREEN 14 · Jordan's invitation
     ────────────────────────────────────────── -->
-    <div class="screen" id="screen-2">
+    <div class="screen" id="screen-14">
 
       <div class="page-header">
         <div class="flex items-center gap-12 mb-8">
@@ -862,7 +1842,7 @@
               <div class="topic-row-name">Legal custody</div>
               <div class="topic-row-sub">Who makes major decisions for Mia</div>
             </div>
-            <button class="btn btn-primary btn-sm" onclick="showScreen(3)">Start →</button>
+            <button class="btn btn-primary btn-sm" onclick="showScreen(15)">Start →</button>
           </div>
           <div class="topic-row">
             <div class="topic-row-icon">📅</div>
@@ -903,16 +1883,16 @@
       </div>
 
       <div class="action-row">
-        <button class="btn btn-primary" onclick="showScreen(3)">Start reviewing →</button>
+        <button class="btn btn-primary" onclick="showScreen(15)">Start reviewing →</button>
         <span class="text-muted">Review at your own pace — your progress saves automatically</span>
       </div>
     </div>
 
 
     <!-- ──────────────────────────────────────────
-         SCREEN 3 · Jordan reviews Legal Custody
+         SCREEN 15 · Jordan reviews Legal Custody
     ────────────────────────────────────────── -->
-    <div class="screen" id="screen-3">
+    <div class="screen" id="screen-15">
 
       <div class="flex items-center justify-between mb-24">
         <div class="flex items-center gap-12">
@@ -982,7 +1962,7 @@
             <div class="radio-option-desc">Both parents make major decisions together</div>
           </div>
         </div>
-        <div class="radio-option" onclick="selectOption(this, 'custody-options'); showScreen(4)">
+        <div class="radio-option" onclick="selectOption(this, 'custody-options'); showScreen(16)">
           <div class="radio-circle"></div>
           <div class="radio-option-text">
             <div class="radio-option-title">I'd like to suggest something different</div>
@@ -999,16 +1979,16 @@
       </div>
 
       <div class="action-row">
-        <button class="btn btn-primary" onclick="showScreen(4)">I agree — next topic →</button>
-        <button class="btn btn-ghost btn-sm" onclick="showScreen(2)">← Back to all topics</button>
+        <button class="btn btn-primary" onclick="showScreen(16)">I agree — next topic →</button>
+        <button class="btn btn-ghost btn-sm" onclick="showScreen(14)">← Back to all topics</button>
       </div>
     </div>
 
 
     <!-- ──────────────────────────────────────────
-         SCREEN 4 · Jordan's counter-proposal
+         SCREEN 16 · Jordan's counter-proposal
     ────────────────────────────────────────── -->
-    <div class="screen" id="screen-4">
+    <div class="screen" id="screen-16">
 
       <div class="flex items-center justify-between mb-24">
         <div class="flex items-center gap-12">
@@ -1062,16 +2042,16 @@
       </div>
 
       <div class="action-row">
-        <button class="btn btn-primary" onclick="showScreen(2)">Send this proposal to Alex</button>
-        <button class="btn btn-ghost btn-sm" onclick="showScreen(3)">← Back</button>
+        <button class="btn btn-primary" onclick="showScreen(14)">Send this proposal to Alex</button>
+        <button class="btn btn-ghost btn-sm" onclick="showScreen(15)">← Back</button>
       </div>
     </div>
 
 
     <!-- ──────────────────────────────────────────
-         SCREEN 5 · Alex notified — Jordan responded
+         SCREEN 17 · Alex notified — Jordan responded
     ────────────────────────────────────────── -->
-    <div class="screen" id="screen-5">
+    <div class="screen" id="screen-17">
 
       <div class="page-header">
         <div class="flex items-center gap-12 mb-8">
@@ -1097,7 +2077,7 @@
               <div class="topic-row-name">Legal custody</div>
               <div class="topic-row-sub">Jordan suggested sole legal custody</div>
             </div>
-            <button class="btn btn-primary btn-sm" onclick="showScreen(6)">Review →</button>
+            <button class="btn btn-primary btn-sm" onclick="showScreen(18)">Review →</button>
           </div>
           <div class="topic-row">
             <div class="topic-row-icon">📅</div>
@@ -1141,15 +2121,15 @@
       </div>
 
       <div class="action-row">
-        <button class="btn btn-primary" onclick="showScreen(6)">Review legal custody →</button>
+        <button class="btn btn-primary" onclick="showScreen(18)">Review legal custody →</button>
       </div>
     </div>
 
 
     <!-- ──────────────────────────────────────────
-         SCREEN 6 · Alex reviews comparison
+         SCREEN 18 · Alex reviews comparison
     ────────────────────────────────────────── -->
-    <div class="screen" id="screen-6">
+    <div class="screen" id="screen-18">
 
       <div class="flex items-center justify-between mb-24">
         <div class="flex items-center gap-12">
@@ -1221,16 +2201,16 @@
       </div>
 
       <div class="action-row">
-        <button class="btn btn-primary" onclick="showScreen(7)">Send response to Jordan</button>
-        <button class="btn btn-ghost btn-sm" onclick="showScreen(5)">← All topics</button>
+        <button class="btn btn-primary" onclick="showScreen(19)">Send response to Jordan</button>
+        <button class="btn btn-ghost btn-sm" onclick="showScreen(17)">← All topics</button>
       </div>
     </div>
 
 
     <!-- ──────────────────────────────────────────
-         SCREEN 7 · Agreement reached
+         SCREEN 19 · Agreement reached
     ────────────────────────────────────────── -->
-    <div class="screen" id="screen-7">
+    <div class="screen" id="screen-19">
 
       <div class="celebration-banner">
         <span class="emoji">🤝</span>
@@ -1292,15 +2272,15 @@
       </div>
 
       <div class="action-row">
-        <button class="btn btn-primary" onclick="showScreen(8)">Review and sign →</button>
+        <button class="btn btn-primary" onclick="showScreen(20)">Review and sign →</button>
       </div>
     </div>
 
 
     <!-- ──────────────────────────────────────────
-         SCREEN 8 · Sign & file
+         SCREEN 20 · Sign & file
     ────────────────────────────────────────── -->
-    <div class="screen" id="screen-8">
+    <div class="screen" id="screen-20">
 
       <div class="page-header">
         <div class="flex items-center gap-12 mb-8">
@@ -1371,7 +2351,7 @@
 
           <div id="action-sign" class="action-row">
             <button class="btn btn-primary" onclick="completeSigning()">Sign and notify Jordan</button>
-            <button class="btn btn-ghost btn-sm" onclick="showScreen(7)">← Back to agreement</button>
+            <button class="btn btn-ghost btn-sm" onclick="showScreen(19)">← Back to agreement</button>
           </div>
 
           <div id="action-filed" style="display:none;" class="action-row">
@@ -1432,16 +2412,16 @@
   function showScreen(n) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('visible'));
     document.getElementById('screen-' + n).classList.add('visible');
-    document.querySelectorAll('.proto-btn').forEach((btn, i) => {
-      btn.classList.toggle('active', i === n - 1);
+    document.querySelectorAll('.proto-btn').forEach(btn => {
+      btn.classList.toggle('active', parseInt(btn.dataset.screen) === n);
     });
     currentScreen = n;
     updatePovPills(n);
   }
 
   function updatePovPills(n) {
-    const aScreens = [1, 5, 6, 7, 8];
-    const bScreens = [2, 3, 4];
+    const aScreens = [1,2,3,4,5,6,7,8,9,10,11,12,13,17,18,19,20];
+    const bScreens = [14,15,16];
     document.getElementById('pov-a').classList.toggle('active', aScreens.includes(n));
     document.getElementById('pov-b').classList.toggle('active', bScreens.includes(n));
   }
@@ -1450,6 +2430,8 @@
     document.querySelectorAll('#' + groupId + ' .radio-option').forEach(o => o.classList.remove('selected'));
     el.classList.add('selected');
   }
+
+  function toggleCard(el) { el.classList.toggle('on'); }
 
   function signJordan() {
     const block = document.getElementById('sig-jordan');
